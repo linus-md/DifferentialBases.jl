@@ -1,14 +1,14 @@
 using AbstractAlgebra: vars
-using AlgebraicSolving: polynomial_ring, Ideal, GF
+using AlgebraicSolving: polynomial_ring, Ideal, GF, groebner_basis
 
 function diff_op(f, derivatives)
     # TODO
 end
 
-function intersect(I, S)
+function intersect(G, S)
     # This needs a generators in form of a Gröbner basis with an elimination order
     sub_ideal = []
-    for generator in I.gens
+    for generator in G
         symbols = [Symbol(var) for var in vars(generator)]
         if issubset(symbols, S.data.S)
             push!(sub_ideal, generator)
@@ -21,9 +21,3 @@ function differential_basis(ideal, derivatives)
     # TODO
     # Infer the subring
 end
-
-R, (x,y,z) = polynomial_ring(GF(101),["x","y","z"], internal_ordering=:degrevlex)
-I = Ideal([x+2*y+2*z-1, x^2+2*y^2+2*z^2-x, 2*x*y+2*y*z-y, x*y])
-
-S, (x,y) = polynomial_ring(GF(101), ["x","y"], internal_ordering=:lex)
-intersect(I, S)

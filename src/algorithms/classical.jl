@@ -30,10 +30,7 @@ end
 
 function differential_basis(I, derivatives)
     # Infer and create the subring
-    R = I.gens[1].parent
-    k = length(derivatives)
-    n = length(R.data.S)
-    S_vars = R.data.S[n-k+1:end]
+    S_vars = [var for (var, _) in derivatives]
     i = 1
     println("i = ", i)
 

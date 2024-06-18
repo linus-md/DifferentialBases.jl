@@ -11,9 +11,9 @@
     I2 = Ideal(F2)
     G2 = groebner_basis(I2)
 
-    S, (y, z) = polynomial_ring(GF(101), ["y","z"], internal_ordering=:lex)
-    @test intersect_ideal(G1, S)[1] == F1[1]
-    @test intersect_ideal(G2, S) == Any[]
+    S_vars = R.data.S[2:end]
+    @test intersect_ideal(G1, S_vars)[1] == F1[1]
+    @test intersect_ideal(G2, S_vars) == Any[]
 end
 
 @testset "Algorithms -> Classical -> partial" begin

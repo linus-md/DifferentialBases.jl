@@ -3,6 +3,10 @@ uuid = "12289b5d-7c11-438f-92a0-e1442e5c6fa7"
 authors = ["Linus A. Sommer"]
 version = "1.0.0-DEV"
 
+[deps]
+AbstractAlgebra = "c3fe647b-3220-5bb0-a1ea-a7954cac585d"
+AlgebraicSolving = "66b61cbe-0446-4d5d-9090-1ff510639f9d"
+
 [compat]
 julia = "1.6.7"
 

@@ -1,5 +1,5 @@
 module DifferentialBases
 
-# Write your package code here.
+include("algorithms/classical.jl")
 
 end

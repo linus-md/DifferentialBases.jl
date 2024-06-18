@@ -31,12 +31,23 @@ function differential_basis(I, derivatives)
     # Infer and create the subring
     k = length(derivatives)
     S_vars = R.data.S[1:k]
+    i = 1
+    println(i)
 
     # Start computing the differential basis
     G1 = groebner_basis(I)
     G1_S = intersect_ideal(G1, S_vars)
-    G1_S = [normal_form(partial(g), Ideal(G1)) for g in G1_S]
+    G1_S = [normal_form(partial(g, derivatives), Ideal(G1)) for g in G1_S]
     G2 = groebner_basis(Ideal(append!(G1, G1_S)))
+
+    while G1 != G2
+        i += 1
+        println(i)
+        G1 = G2
+        G1_S = intersect_ideal(G1, S_vars)
+        G1_S = [normal_form(partial(g, derivatives), Ideal(G1)) for g in G1_S]
+        G2 = groebner_basis(Ideal(append!(G1, G1_S)))
+    end
     return G2
 end
 

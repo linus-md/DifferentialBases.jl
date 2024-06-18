@@ -1,4 +1,5 @@
 @testset "Algorithms -> Classical -> intersect_ideal" begin
+    using DifferentialBases: intersect_ideal
     using AlgebraicSolving: polynomial_ring, Ideal, GF, groebner_basis
     # Test intersect(G, S)
     R, (x,y,z) = polynomial_ring(GF(101),["x","y","z"], internal_ordering=:lex)
@@ -16,10 +17,12 @@
 end
 
 @testset "Algorithms -> Classical -> partial" begin
+    using DifferentialBases: partial
     using AlgebraicSolving: polynomial_ring, GF
     R, (x,y,z) = polynomial_ring(GF(101),["x","y","z"], internal_ordering=:lex)
     q = x^2 + y^2 + z^2
-    derivatives = [[y, y^2], [y, y^2, z^2]]
-    @test partial(q, derivatives[1]) == 2*x*y + 2*y^3
-    @test partial(q, derivatives[2]) == 2*x*y + 2*y^3 + 2*z^3
+    derivatives_1 = Dict(x => y, y => y^2)
+    derivatives_2 = Dict(x => y, y => y^2, z => z^2)
+    @test partial(q, derivatives_1) == 2*x*y + 2*y^3
+    @test partial(q, derivatives_2) == 2*x*y + 2*y^3 + 2*z^3
 end

@@ -1,13 +1,25 @@
-@testset "Algorithms -> Gröbner bases" begin
-    using AbstractAlgebra: vars
+@testset "Algorithms -> Classical -> intersect_ideal" begin
     using AlgebraicSolving: polynomial_ring, Ideal, GF, groebner_basis
-    
     # Test intersect(G, S)
     R, (x,y,z) = polynomial_ring(GF(101),["x","y","z"], internal_ordering=:lex)
-    F = [y*z, x*y, z*x]
-    I = Ideal(F)
-    G = groebner_basis(I)
+    F1 = [y*z, x*y, z*x]
+    I1 = Ideal(F1)
+    G1 = groebner_basis(I1)
+
+    F2 = [x*z, x*z]
+    I2 = Ideal(F2)
+    G2 = groebner_basis(I2)
 
     S, (y, z) = polynomial_ring(GF(101), ["y","z"], internal_ordering=:lex)
-    @test intersect(G, S)[1] == F[1]
+    @test intersect_ideal(G1, S)[1] == F1[1]
+    @test intersect_ideal(G2, S) == Any[]
+end
+
+@testset "Algorithms -> Classical -> partial" begin
+    using AlgebraicSolving: polynomial_ring, GF
+    R, (x,y,z) = polynomial_ring(GF(101),["x","y","z"], internal_ordering=:lex)
+    q = x^2 + y^2 + z^2
+    derivatives = [[y, y^2], [y, y^2, z^2]]
+    @test partial(q, derivatives[1]) == 2*x*y + 2*y^3
+    @test partial(q, derivatives[2]) == 2*x*y + 2*y^3 + 2*z^3
 end

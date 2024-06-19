@@ -26,16 +26,13 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          - '1.0'
-          - '1' # automatically expands to the latest stable 1.x release of Julia
+          - '1.10'
+          - '1.6'
+          - 'nightly'
         os:
           - ubuntu-latest
-          - macOS-latest
         arch:
           - x64
-        exclude:
-          - os: macOS-latest
-            arch: x86
     steps:
       - uses: actions/checkout@v4
       - uses: julia-actions/setup-julia@v2

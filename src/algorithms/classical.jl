@@ -51,7 +51,7 @@ function differential_basis(ideal, derivatives, R, verbose=false)
         G1 = G2
         pG1 = [partial(g, derivatives) for g in cap(G1, S_vars)]
         append!(pG1, G1)
-        G2 = groebner_basis(Ideal(pG1), eliminate=eliminate)
+        G2 = groebner_basis(Ideal(pG1), eliminate=eliminate, intersect=false)
     end
     return G1
 end

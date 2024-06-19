@@ -31,7 +31,7 @@ end
     using AlgebraicSolving: polynomial_ring, GF
 
     R, (dl,l,v,u,y,x) = polynomial_ring(
-        GF(101),["dl","l","v","u","y","x"], internal_ordering=:lex)
+        GF(101),["dl","l","v","u","y","x"], internal_ordering=:degrevlex)
     derivatives = Dict(
         x => u,
         y => v,

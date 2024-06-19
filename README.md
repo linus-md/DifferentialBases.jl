@@ -16,7 +16,7 @@ derivatives = Dict(x => u, y => v, u => x*l, v => y*l - 1, l => dl)
 ideal = Ideal([x^2 + y^2 - 1])
 ```
 
-Calling `differential_bais(ideal, partial)` results in the following Gröbner basis:
+Calling `differential_base(ideal, partial)` results in the following Gröbner basis:
 
 ```
 8-element Vector{Nemo.FqMPolyRingElem}:

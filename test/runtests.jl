@@ -1,6 +1,5 @@
-using DifferentialBases
 using Test
 
-@testset "DifferentialBases.jl" begin
-    # Write your tests here.
+@testset verbose = true "DifferentialBases Tests" begin
+    include("algorithms/classical.jl")
 end

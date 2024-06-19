@@ -1,10 +1,7 @@
 using AbstractAlgebra: vars, derivative
 using AlgebraicSolving: polynomial_ring, Ideal, GF, groebner_basis, normal_form
 
-function partial(q, derivatives)
-    # The i-th derivative must correspond to the i-th variable, 
-    # all trailing variables are not derived.
-    
+function partial(q, derivatives)    
     n = length(q.parent.data.S)
     @assert length(derivatives) <= n "There can't be more derivatives than variables."
     
@@ -16,7 +13,7 @@ function partial(q, derivatives)
     return result
 end
 
-function intersect_ideal(G, S_vars)
+function cap(G, S_vars)
     # This needs a Gröbner basis with an elimination order
     sub_ideal = []
     for generator in G
@@ -28,41 +25,30 @@ function intersect_ideal(G, S_vars)
     return sub_ideal
 end
 
-function differential_basis(I, derivatives)
+function differential_basis(ideal, derivatives, verbose=false)
     # Infer and create the subring
-    S_vars = [var for (var, _) in derivatives]
-    i = 1
-    println("i = ", i)
-
+    S_vars = [Symbol(var.first) for var in derivatives]
+    if verbose
+        i = 1
+        println("i = ", i)
+    end
+    
     # Start computing the differential basis
-    G1 = groebner_basis(I)
-    G1_S = intersect_ideal(G1, S_vars)
-    G1_S = [partial(g, derivatives) for g in G1_S]
-    append!(G1, G1_S)
-    G2 = groebner_basis(Ideal(G1))
+    G1 = groebner_basis(ideal)
+    pG1 = [partial(g, derivatives) for g in cap(G1, S_vars)]
+    append!(pG1, G1)
+    G2 = groebner_basis(Ideal(pG1))
 
     # Repeat until closed under partial
-    while Ideal(G1) != Ideal(G2)
-        i += 1
-        println("i = ", i)
+    while G1 != G2
+        if verbose
+            i += 1
+            println("i = ", i)
+        end
         G1 = G2
-        G1_S = intersect_ideal(G1, S_vars)
-        G1_S = [partial(g, derivatives) for g in G1_S]
-        append!(G1, G1_S)
-        G2 = groebner_basis(Ideal(G1))
+        pG1 = [partial(g, derivatives) for g in cap(G1, S_vars)]
+        append!(pG1, G1)
+        G2 = groebner_basis(Ideal(pG1))
     end
-    return G2
+    return G1
 end
-
-# invlex order
-R, (dl,l,v,u,y,x) = polynomial_ring(GF(101),["dl","l","v","u","y","x"], internal_ordering=:lex)
-derivatives = Dict(
-    x => u,
-    y => v,
-    u => x*l,
-    v => y*l - 1,
-    l => dl
-)
-
-I = Ideal([x^2 + y^2 - 1])
-#differential_basis(I, derivatives)

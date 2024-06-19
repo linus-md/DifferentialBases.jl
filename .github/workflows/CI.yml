@@ -32,7 +32,7 @@ jobs:
           - x64
     steps:
       - name: Install AlgebraicSolving from GitHub
-        run: julia -e 'using Pkg; Pkg.add(PackageSpec(url="https://github.com/algebraic-solving/AlgebraicSolving.jl"))'
+        run: julia -e 'using Pkg; Pkg.add(PackageSpec(url="https://github.com/algebraic-solving/AlgebraicSolving.jl", rev="main"))'
       - uses: actions/checkout@v4
       - uses: julia-actions/setup-julia@v2
         with:

@@ -1,5 +1,5 @@
 using AbstractAlgebra: vars, derivative
-using AlgebraicSolving: polynomial_ring, Ideal, GF, groebner_basis, normal_form, QQ, eliminate
+using AlgebraicSolving: polynomial_ring, Ideal, GF, groebner_basis, normal_form
 
 function partial(q, derivatives)    
     n = length(q.parent.data.S)
@@ -40,7 +40,7 @@ function differential_basis(ideal, derivatives, R, verbose=false)
     G1 = groebner_basis(ideal)
     pG1 = [partial(g, derivatives) for g in cap(G1, S_vars)]
     append!(pG1, G1)
-    G2 = groebner_basis(Ideal(pG1), eliminate=eliminate)
+    G2 = groebner_basis(Ideal(pG1), eliminate=eliminate, intersect=false)
 
     # Repeat until closed under partial
     while G1 != G2

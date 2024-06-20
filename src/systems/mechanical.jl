@@ -2,9 +2,9 @@ using AlgebraicSolving: polynomial_ring, GF, Ideal
 
 function simple_pendulum()
     R, variables = polynomial_ring(
-        GF(101),["dl","l","v","u","y","x"], 
+        GF(101),["dl","x","y","u","v",""], 
         internal_ordering=:degrevlex)
-    (dl,l,v,u,y,x) = variables
+    (dl,x,y,u,v,l) = variables
     derivatives = Dict(
         x => u,
         y => v,

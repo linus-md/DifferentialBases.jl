@@ -6,7 +6,6 @@ function partial(q, derivatives)
     @assert length(derivatives) <= n "There can't be more derivatives than variables."
     
     result = 0
-    # TODO use correct derivative
     for (var, value) in derivatives
         result += value * derivative(q, var)
     end
@@ -35,23 +34,25 @@ function differential_basis(ideal, derivatives, R, verbose=false)
     # Start computing the differential basis
     G1 = groebner_basis(ideal)
     pG1 = [partial(g, derivatives) for g in cap(G1, S_vars)]
+    pG1 = [normal_form(pg, Ideal(G1)) for pg in pG1]
     append!(pG1, G1)
     G2 = groebner_basis(Ideal(pG1), eliminate=eliminate, intersect=false)
     if verbose
         i = 1
-        println("i = ", i)
-        println("G = ", G1)
+        println("iteration ", i)
+        println("#G = ", length(G1))
     end
 
     # Repeat until closed under partial
     while G1 != G2
         if verbose
             i += 1
-            println("i = ", i)
-            println("G = ", G2)
+            println("iteration ", i)
+            println("#G = ", length(G2))
         end
         G1 = G2
         pG1 = [partial(g, derivatives) for g in cap(G1, S_vars)]
+        pG1 = [normal_form(pg, Ideal(G1)) for pg in pG1]
         append!(pG1, G1)
         G2 = groebner_basis(Ideal(pG1), eliminate=eliminate, intersect=false)
     end

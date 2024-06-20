@@ -69,7 +69,9 @@ function fast_slow_reaction()
         CB => - Fi * V2 * CB + RA - RB,
         CC => - Fi * V2 * CC + RB,
         Keqinv => 0,
-        kB => 0)
+        kB => 0,
+        F => 0,
+        Fi => 0)
     
     ideal = Ideal([CA - CB * Keqinv, RB - kB * CB, V1*V2-1])
     return ideal, derivatives, R

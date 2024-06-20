@@ -11,5 +11,5 @@
 
     ideal, derivatives, R = fast_slow_reaction()
     @test length(ideal.gens) == 3
-    @test length(derivatives) == 7
+    @test length(derivatives) == 9
 end

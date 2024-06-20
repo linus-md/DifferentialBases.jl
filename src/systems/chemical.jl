@@ -59,6 +59,7 @@ function fast_slow_reaction()
         ["RA","RB","V3","V1","V2","CA","CAi","CB","CC","F","Fi","Keqinv","kB"],
         internal_ordering=:degrevlex)
     # Keqinv = 1 / Keq
+    # TODO Fi, F?
     (RA, RB, V3, V1, V2, CA, CAi, CB, CC, F, Fi, Keqinv, kB) = variables
     
     derivatives = Dict(
@@ -66,7 +67,9 @@ function fast_slow_reaction()
         V2 => V3,
         CA => Fi * V2 * (CAi - CA) - RA,
         CB => - Fi * V2 * CB + RA - RB,
-        CC => - Fi * V2 * CC + RB)
+        CC => - Fi * V2 * CC + RB,
+        Keqinv => 0,
+        kB => 0)
     
     ideal = Ideal([CA - CB * Keqinv, RB - kB * CB, V1*V2-1])
     return ideal, derivatives, R

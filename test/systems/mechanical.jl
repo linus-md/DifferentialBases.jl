@@ -1,4 +1,4 @@
-@testset "Systems -> mechanical -> differential_basis" begin
+@testset "Systems -> mechanical" begin
     using DifferentialBases: simple_pendulum, masspoint_parabola
 
     ideal, derivatives, R = simple_pendulum()

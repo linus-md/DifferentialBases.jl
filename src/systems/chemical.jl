@@ -5,12 +5,13 @@ function chem_1()
     R, (x1, x2, x3, x4, k1, k2, k3, T1, T2) = polynomial_ring(
         GF(101),["x1","x2","x3","x4","k1","k2","k3","T1","T2"], 
         internal_ordering=:degrevlex)
+    
     derivatives = Dict(
         x1 => - k1*x1 + k2*x2*x3,    
         x2 => k1*x1 - k2*x2*x3,
         x3 => - k2*x2*x3 + k3*x4,
-        x4 => k2*x2*x3 - k3*x4
-    )
+        x4 => k2*x2*x3 - k3*x4)
+
     ideal = Ideal([x1 + x2 - T1, x3 + x4 - T2])
     return ideal, derivatives, R
 end
@@ -53,3 +54,20 @@ function akzo_nobel()
     return ideal, derivatives, R
 end
 
+function fast_slow_reaction()
+    R, variables = polynomial_ring(GF(101),
+        ["RA","RB","V3","V1","V2","CA","CAi","CB","CC","F","Fi","Keqinv","kB"],
+        internal_ordering=:degrevlex)
+    # Keqinv = 1 / Keq
+    (RA, RB, V3, V1, V2, CA, CAi, CB, CC, F, Fi, Keqinv, kB) = variables
+    
+    derivatives = Dict(
+        V1 => Fi - F,
+        V2 => V3,
+        CA => Fi * V2 * (CAi - CA) - RA,
+        CB => - Fi * V2 * CB + RA - RB,
+        CC => - Fi * V2 * CC + RB)
+    
+    ideal = Ideal([CA - CB * Keqinv, RB - kB * CB, V1*V2-1])
+    return ideal, derivatives, R
+end

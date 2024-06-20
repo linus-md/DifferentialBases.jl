@@ -1,9 +1,10 @@
 using AlgebraicSolving: polynomial_ring, GF, Ideal
 
 function simple_pendulum()
-    R, (dl,l,v,u,y,x) = polynomial_ring(
+    R, variables = polynomial_ring(
         GF(101),["dl","l","v","u","y","x"], 
         internal_ordering=:degrevlex)
+    (dl,l,v,u,y,x) = variables
     derivatives = Dict(
         x => u,
         y => v,
@@ -11,6 +12,53 @@ function simple_pendulum()
         v => y*l - 1,
         l => dl)
     ideal = Ideal([x^2 + y^2 - 1])
+    return ideal, derivatives, R
+end
+
+function double_pendulum()
+    R, variables = polynomial_ring(GF(101),
+        ["dl1","dl2","x1","y1","u1","v1","x2","y2","u2","v2","l1","l2"],
+        internal_ordering=:degrevlex)
+    (dl1,dl2,x1,y1,u1,v1,x2,y2,u2,v2,l1,l2) = variables
+    derivatives = Dict(
+        x1 => u1,
+        y1 => v1,
+        u1 => - l1*x1 - l2*(x1 - x2),
+        v1 => - l1*y1 - l2*(y1 - y2) - 1,
+        x2 => u2,
+        y2 => v2,
+        u2 => - l2*(x2 - x1),
+        v2 => - l2*(y2 - y1) - 1,
+        l1 => dl1,
+        l2 => dl2)
+    ideal = Ideal([x1^2 + y1^2 - 1, (x2-x1)^2 + (y2-y1)^2 - 1])
+    return ideal, derivatives, R
+end
+
+function triple_pendulum()
+    R, variables = polynomial_ring(
+        GF(101),["dl1","dl2","dl3","x1","y1","u1","v1","x2","y2","u2","v2",
+        "x3","y3","u3","v3","l1","l2","l3"],
+        internal_ordering=:degrevlex)
+    (dl1,dl2,dl3,x1,y1,u1,v1,x2,y2,u2,v2,x3,y3,u3,v3,l1,l2,l3) = variables
+    derivatives = Dict(
+        x1 => u1,
+        y1 => v1,
+        u1 => - l1*x1 - l2*(x1 - x2),
+        v1 => - l1*y1 - l2*(y1 - y2) - 1,
+        x2 => u2,
+        y2 => v2,
+        u2 => - l2*(x2 - x1) - l3*(x2 - x3),
+        v2 => - l2*(y2 - y1) - l3*(y2 - y3) - 1,
+        x3 => u3,
+        y3 => v3,
+        u3 => - l3*(x3 - x2),
+        v3 => - l3*(y3 - y2) - 1,
+        l1 => dl1,
+        l2 => dl2,
+        l3 => dl3)
+    ideal = Ideal([x1^2 + y1^2 - 1, (x2-x1)^2 + (y2-y1)^2 - 1,
+            (x3-x2)^2 + (y3-y2)^2 - 1])
     return ideal, derivatives, R
 end
 

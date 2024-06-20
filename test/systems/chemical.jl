@@ -3,7 +3,7 @@
 
     ideal, derivatives, R = chem_1()
     @test length(ideal.gens) == 2
-    @test length(derivatives) == 4
+    @test length(derivatives) == 9
 
     ideal, derivatives, R = akzo_nobel()
     @test length(ideal.gens) == 2

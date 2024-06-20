@@ -31,22 +31,24 @@ function differential_basis(ideal, derivatives, R, verbose=false)
     S_vars = [Symbol(var.first) for var in derivatives]
     k = length(S_vars)
     eliminate = n - k
-    if verbose
-        i = 1
-        println("i = ", i)
-    end
     
     # Start computing the differential basis
     G1 = groebner_basis(ideal)
     pG1 = [partial(g, derivatives) for g in cap(G1, S_vars)]
     append!(pG1, G1)
     G2 = groebner_basis(Ideal(pG1), eliminate=eliminate, intersect=false)
+    if verbose
+        i = 1
+        println("i = ", i)
+        println("G = ", G1)
+    end
 
     # Repeat until closed under partial
     while G1 != G2
         if verbose
             i += 1
             println("i = ", i)
+            println("G = ", G2)
         end
         G1 = G2
         pG1 = [partial(g, derivatives) for g in cap(G1, S_vars)]

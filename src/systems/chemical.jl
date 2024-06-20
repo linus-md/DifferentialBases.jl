@@ -10,7 +10,8 @@ function chem_1()
         x1 => - k1*x1 + k2*x2*x3,    
         x2 => k1*x1 - k2*x2*x3,
         x3 => - k2*x2*x3 + k3*x4,
-        x4 => k2*x2*x3 - k3*x4)
+        x4 => k2*x2*x3 - k3*x4,
+        k1 => 0, k2 => 0, k3 => 0, T1 => 0, T2 => 0)
 
     ideal = Ideal([x1 + x2 - T1, x3 + x4 - T2])
     return ideal, derivatives, R

@@ -17,11 +17,12 @@ end
 
 function akzo_nobel()
     R, variables = polynomial_ring(
-        GF(101),["x6","x1","x2","x3","x4","x5","x6","x7","x8",
+        GF(101),["x6","x8","x1","x2","x3","x4","x5","x6","x7",
         "k1","k2","k3","k4","Kinv","klA","Ks","pCO2","Hinv"], 
         internal_ordering=:degrevlex)
 
-        (x6, x1, x2, x3, x4, x5, x6, x7, x8, 
+        # Hinv = 1 / H, Kinv = 1 / K
+        (x6, x8, x1, x2, x3, x4, x5, x6, x7, 
         k1, k2, k3, k4, Kinv, klA, Ks, pCO2, Hinv) = variables
     
     r1 = k1 * x1^4 * x7
@@ -51,3 +52,4 @@ function akzo_nobel()
     ideal = Ideal([Ks * x1 * x4 - x6, x7^2 - x2])
     return ideal, derivatives, R
 end
+

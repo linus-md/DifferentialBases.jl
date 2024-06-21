@@ -7,9 +7,9 @@
 
     ideal, derivatives, R = akzo_nobel()
     @test length(ideal.gens) == 2
-    @test length(derivatives) == 15
+    @test length(derivatives) == 16
 
     ideal, derivatives, R = fast_slow_reaction()
     @test length(ideal.gens) == 3
-    @test length(derivatives) == 9
+    @test length(derivatives) == 12
 end

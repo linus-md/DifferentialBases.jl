@@ -31,7 +31,7 @@ end
     using AlgebraicSolving: polynomial_ring, GF
 
     R, (dl,l,v,u,y,x) = polynomial_ring(
-        GF(101),["dl","l","v","u","y","x"], internal_ordering=:lex)
+        GF(101),["dl","l","v","u","y","x"], internal_ordering=:degrevlex)
     derivatives = Dict(
         x => u,
         y => v,
@@ -41,16 +41,16 @@ end
     )
 
     sol = [
-        dl + 98*v,
         y^2 + x^2 + 100,
         v*y + u*x,
         l + v^2 + u^2 + 100*y,
         l*x^2 + 100*l + 100*u^2 + 100*y*x^2 + y,
         100*v*x^2 + v + u*y*x,
         l*y*x + 100*v*u + x^3 + 100*x,
-        l*y + 100*v*u*x + u^2*y + x^2 + 100
+        l*y + 100*v*u*x + u^2*y + x^2 + 100,
+        dl + 98*v
     ]
 
     ideal = Ideal([x^2 + y^2 - 1])
-    @test differential_basis(ideal, derivatives) == sol
+    @test differential_basis(ideal, derivatives, R, 2) == sol
 end

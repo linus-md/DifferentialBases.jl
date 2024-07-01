@@ -5,12 +5,14 @@ function simple_pendulum()
         GF(101),["dl","x","y","u","v",""], 
         internal_ordering=:degrevlex)
     (dl,x,y,u,v,l) = variables
+
     derivatives = Dict(
         x => u,
         y => v,
         u => x*l,
         v => y*l - 1,
         l => dl)
+
     ideal = Ideal([x^2 + y^2 - 1])
     return ideal, derivatives, R
 end
@@ -20,6 +22,7 @@ function double_pendulum()
         ["dl1","dl2","x1","y1","u1","v1","x2","y2","u2","v2","l1","l2"],
         internal_ordering=:degrevlex)
     (dl1,dl2,x1,y1,u1,v1,x2,y2,u2,v2,l1,l2) = variables
+
     derivatives = Dict(
         x1 => u1,
         y1 => v1,
@@ -31,6 +34,7 @@ function double_pendulum()
         v2 => - l2*(y2 - y1) - 1,
         l1 => dl1,
         l2 => dl2)
+
     ideal = Ideal([x1^2 + y1^2 - 1, (x2-x1)^2 + (y2-y1)^2 - 1])
     return ideal, derivatives, R
 end
@@ -41,6 +45,7 @@ function triple_pendulum()
         "x3","y3","u3","v3","l1","l2","l3"],
         internal_ordering=:degrevlex)
     (dl1,dl2,dl3,x1,y1,u1,v1,x2,y2,u2,v2,x3,y3,u3,v3,l1,l2,l3) = variables
+    
     derivatives = Dict(
         x1 => u1,
         y1 => v1,
@@ -57,6 +62,7 @@ function triple_pendulum()
         l1 => dl1,
         l2 => dl2,
         l3 => dl3)
+
     ideal = Ideal([x1^2 + y1^2 - 1, (x2-x1)^2 + (y2-y1)^2 - 1,
             (x3-x2)^2 + (y3-y2)^2 - 1])
     return ideal, derivatives, R
@@ -66,7 +72,8 @@ function masspoint_parabola()
     R, (dl, p1, p2, p3, v1, v2, v3, l) = polynomial_ring(
         GF(101),["dl","p1","p2","p3","v1","v2","v3","l"], 
         internal_ordering=:degrevlex)
-    derivatives = Dict(
+    
+    derivatives = Dict(    
         p1 => v1,
         p2 => v2,
         p3 => v3,
@@ -74,6 +81,7 @@ function masspoint_parabola()
         v2 => 2*l*p2,
         v3 => l - 1,
         l => dl)
+
     ideal = Ideal([p1^2 + p2^2 - p3])
     return ideal, derivatives, R
 end

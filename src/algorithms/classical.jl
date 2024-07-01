@@ -6,7 +6,6 @@ function partial(q, derivatives)
     @assert length(derivatives) <= n "There can't be more derivatives than variables."
     
     result = 0
-    # TODO use correct derivative
     for (var, value) in derivatives
         result += value * derivative(q, var)
     end
@@ -14,7 +13,6 @@ function partial(q, derivatives)
 end
 
 function cap(G, S_vars)
-    # This needs a Gröbner basis with an elimination order
     sub_ideal = []
     for generator in G
         symbols = [Symbol(var) for var in vars(generator)]
@@ -25,30 +23,39 @@ function cap(G, S_vars)
     return sub_ideal
 end
 
-function differential_basis(ideal, derivatives, verbose=false)
+function differential_basis(ideal, derivatives, R, info_level)
     # Infer and create the subring
+    n = R.data.nvars
     S_vars = [Symbol(var.first) for var in derivatives]
-    if verbose
-        i = 1
-        println("i = ", i)
-    end
+    k = length(S_vars)
+    eliminate = n - k
     
     # Start computing the differential basis
     G1 = groebner_basis(ideal)
     pG1 = [partial(g, derivatives) for g in cap(G1, S_vars)]
+    pG1 = [normal_form(pg, Ideal(G1)) for pg in pG1]
     append!(pG1, G1)
-    G2 = groebner_basis(Ideal(pG1))
+    G2 = groebner_basis(Ideal(pG1), eliminate=eliminate,
+                        intersect=false, info_level=info_level)
+    if info_level == 2
+        i = 1
+        println("iteration ", i)
+        println("#G = ", length(G1))
+    end
 
     # Repeat until closed under partial
     while G1 != G2
-        if verbose
+        if info_level == 2
             i += 1
-            println("i = ", i)
+            println("iteration ", i)
+            println("#G = ", length(G2))
         end
         G1 = G2
         pG1 = [partial(g, derivatives) for g in cap(G1, S_vars)]
+        pG1 = [normal_form(pg, Ideal(G1)) for pg in pG1]
         append!(pG1, G1)
-        G2 = groebner_basis(Ideal(pG1))
+        G2 = groebner_basis(Ideal(pG1), eliminate=eliminate,
+                            intersect=false, info_level=info_level)
     end
     return G1
 end

@@ -27,10 +27,10 @@ function akzo_nobel()
         "k1","k2","k3","k4","K","klA","Ks","pCO2","H"],
         internal_ordering=:degrevlex)
 
-        # 1/H => H, 1/K => K
-        (dx6, dx7, 
-        x1, x2, x3, x4, x5, x6, x7, 
-        k1, k2, k3, k4, K, klA, Ks, pCO2, H) = variables
+    # 1/H => H, 1/K => K
+    (dx6, dx7, 
+    x1, x2, x3, x4, x5, x6, x7, 
+    k1, k2, k3, k4, K, klA, Ks, pCO2, H) = variables
     
     r1 = k1 * x1^4 * x7
     r2 = k2 * x3 * x5

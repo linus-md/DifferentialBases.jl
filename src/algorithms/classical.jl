@@ -37,7 +37,7 @@ function differential_basis(ideal, derivatives, R, info_level)
     append!(pG1, G1)
     G2 = groebner_basis(Ideal(pG1), eliminate=eliminate,
                         intersect=false, info_level=info_level)
-    if info_level == 2
+    if info_level > 0
         i = 1
         println("iteration ", i)
         println("#G = ", length(G1))
@@ -45,7 +45,7 @@ function differential_basis(ideal, derivatives, R, info_level)
 
     # Repeat until closed under partial
     while G1 != G2
-        if info_level == 2
+        if info_level > 0
             i += 1
             println("iteration ", i)
             println("#G = ", length(G2))

@@ -1,6 +1,8 @@
 using AlgebraicSolving: polynomial_ring, GF, Ideal
 using AbstractAlgebra: derivative, matrix_space, matrix
 
+# TODO The variable names in the derivatives are wrong! i.e. 1..nvars
+
 function linear_nn_2(m, n, r)
     R, A, B, x, y = polynomial_ring(
         GF(101),
@@ -16,9 +18,9 @@ function linear_nn_2(m, n, r)
     f = f[1]^2 + f[2]^2
     
     derivatives = Dict(
-        i => derivative(f, i) for i in 1:nvars - r - m + 1)
+        R[i] => derivative(f, i) for i in 1:nvars - r - m + 1)
     for i in nvars - r - m + 1:nvars
-        derivatives[i] = R(0)
+        derivatives[R[i]] = R(0)
     end
     
     C = transpose(A) * A - B *  transpose(B)
@@ -46,9 +48,9 @@ function linear_nn_3(m, n, r, s)
     f = f[1]^2 + f[2]^2
     
     derivatives = Dict(
-        i => derivative(f, i) for i in 1:nvars - s - m + 1)
+        R[i] => derivative(f, i) for i in 1:nvars - s - m + 1)
     for i in nvars - s - m + 1:nvars
-        derivatives[i] = R(0)
+        derivatives[R[i]] = R(0)
     end
     
     D1 = transpose(A) * A - B *  transpose(B)
@@ -63,5 +65,3 @@ function linear_nn_3(m, n, r, s)
     ideal = Ideal(D_flat)
     return ideal, derivatives, R
 end
-
-linear_nn_3(2, 3, 4, 3)

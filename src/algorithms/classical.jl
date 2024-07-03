@@ -23,7 +23,7 @@ function cap(G, S_vars)
     return sub_ideal
 end
 
-function differential_basis(ideal, derivatives, R, info_level)
+function differential_basis(ideal, derivatives, R, nf=false, info_level=0)
     # Infer and create the subring
     n = R.data.nvars
     S_vars = [Symbol(var.first) for var in derivatives]
@@ -33,7 +33,9 @@ function differential_basis(ideal, derivatives, R, info_level)
     # Start computing the differential basis
     G1 = groebner_basis(ideal)
     pG1 = [partial(g, derivatives) for g in cap(G1, S_vars)]
-    pG1 = [normal_form(pg, Ideal(G1)) for pg in pG1]
+    if nf == true
+        pG1 = [normal_form(pg, Ideal(G1)) for pg in pG1]
+    end
     append!(pG1, G1)
     G2 = groebner_basis(Ideal(pG1), eliminate=eliminate,
                         intersect=false, info_level=info_level)
@@ -52,8 +54,10 @@ function differential_basis(ideal, derivatives, R, info_level)
         end
         G1 = G2
         pG1 = [partial(g, derivatives) for g in cap(G1, S_vars)]
-        pG1 = [normal_form(pg, Ideal(G1)) for pg in pG1]
-        append!(pG1, G1)
+        if nf == true
+            pG1 = [normal_form(pg, Ideal(G1)) for pg in pG1]
+        end
+            append!(pG1, G1)
         G2 = groebner_basis(Ideal(pG1), eliminate=eliminate,
                             intersect=false, info_level=info_level)
     end

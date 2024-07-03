@@ -1,6 +1,5 @@
 using AlgebraicSolving: polynomial_ring, GF, Ideal
-using AbstractAlgebra: derivative
-#using LinearAlgebra
+using AbstractAlgebra: derivative, matrix_space, matrix
 
 function linear_nn_2(m, n, r)
     R, A, B, x, y = polynomial_ring(
@@ -11,6 +10,7 @@ function linear_nn_2(m, n, r)
         :y => (1:m))
 
     nvars = m*n + n*r + r + m
+    A, B = matrix(A), matrix(B)
 
     f = A*B*x - y
     f = f[1]^2 + f[2]^2
@@ -21,8 +21,12 @@ function linear_nn_2(m, n, r)
         derivatives[i] = R(0)
     end
     
-    #constraints = collect(Iterators.flatten(A*A' - B'*B))
-    ideal = Ideal([R(0)])
+    C = transpose(A) * A - B *  transpose(B)
+    C_flat = eltype(A)[]
+    for elem in C
+        push!(C_flat, elem)
+    end
+    ideal = Ideal(C_flat)
     return ideal, derivatives, R
 end
 
@@ -36,6 +40,7 @@ function linear_nn_3(m, n, r, s)
         :y => (1:m))
 
     nvars = m*n + n*r + r*s + s+m
+    A, B, C = matrix(A), matrix(B), matrix(C)
 
     f = A*B*C*x - y
     f = f[1]^2 + f[2]^2
@@ -46,9 +51,17 @@ function linear_nn_3(m, n, r, s)
         derivatives[i] = R(0)
     end
     
-    #constraints = collect(Iterators.flatten(A*A' - B'*B))
-    #push!(constraints, collect(Iterators.flatten(B*B' - C'*C)))
-    ideal = Ideal([R(0)])
+    D1 = transpose(A) * A - B *  transpose(B)
+    D2 = transpose(B) * B - C *  transpose(C)
+    D_flat = eltype(A)[]
+    for elem in D1
+        push!(D_flat, elem)
+    end
+    for elem in D2
+        push!(D_flat, elem)
+    end
+    ideal = Ideal(D_flat)
     return ideal, derivatives, R
 end
 
+linear_nn_3(2, 3, 4, 3)

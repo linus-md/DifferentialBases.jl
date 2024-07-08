@@ -52,5 +52,6 @@ end
     ]
 
     ideal = Ideal([x^2 + y^2 - 1])
-    @test differential_basis(ideal, derivatives, R, 2) == sol
+    @test differential_basis(ideal, derivatives, R) == sol
+    @test differential_basis(Ideal(sol), derivatives, R, true, 1) == sol
 end

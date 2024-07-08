@@ -1,7 +1,5 @@
 using AlgebraicSolving: polynomial_ring, GF, Ideal
-using AbstractAlgebra: derivative, matrix_space, matrix
-
-# TODO The variable names in the derivatives are wrong! i.e. 1..nvars
+using AbstractAlgebra: derivative, matrix
 
 function linear_nn_2(m, n, r)
     R, A, B, x, y = polynomial_ring(

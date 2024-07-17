@@ -1,5 +1,8 @@
 using AbstractAlgebra: vars, derivative
-using AlgebraicSolving: polynomial_ring, Ideal, GF, groebner_basis, normal_form
+using AlgebraicSolving
+using AlgebraicSolving: 
+    polynomial_ring, Ideal, GF, groebner_basis, 
+    normal_form, sig_groebner_basis
 
 function partial(q, derivatives)    
     n = length(q.parent.data.S)
@@ -60,6 +63,43 @@ function differential_basis(ideal, derivatives, R, nf=false, info_level=0)
             append!(pG1, G1)
         G2 = groebner_basis(Ideal(pG1), eliminate=eliminate,
                             intersect=false, info_level=info_level)
+    end
+    return G1
+end
+
+function deg_stop_differential_basis(
+    ideal, derivatives, R, deg, nf=false, info_level=0)
+    # Infer and create the subring
+    S_vars = [Symbol(var.first) for var in derivatives]
+
+    # Start computing the differential basis
+    G1 = groebner_basis(ideal)
+    pG1 = [partial(g, derivatives) for g in cap(G1, S_vars)]
+    if nf == true
+        pG1 = [normal_form(pg, Ideal(G1)) for pg in pG1]
+    end
+    append!(pG1, G1)
+    G2 = sig_groebner_basis(Ideal(pG1))
+    if info_level > 0
+        i = 1
+        println("iteration ", i)
+        println("#G = ", length(G1))
+    end
+
+    # Repeat until closed under partial
+    while G1 != G2
+        if info_level > 0
+            i += 1
+            println("iteration ", i)
+            println("#G = ", length(G2))
+        end
+        G1 = G2
+        pG1 = [partial(g, derivatives) for g in cap(G1, S_vars)]
+        if nf == true
+            pG1 = [normal_form(pg, Ideal(G1)) for pg in pG1]
+        end
+            append!(pG1, G1)
+            G2 = sig_groebner_basis(Ideal(pG1))
     end
     return G1
 end

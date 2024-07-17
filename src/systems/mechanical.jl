@@ -17,6 +17,29 @@ function simple_pendulum()
     return ideal, derivatives, R
 end
 
+function double_pendulum_fixed_l1l2()
+    R, variables = polynomial_ring(GF(101),
+        ["x1","y1","u1","v1","x2","y2","u2","v2","l1","l2","h"],
+        internal_ordering=:degrevlex)
+    (x1,y1,u1,v1,x2,y2,u2,v2,l1,l2,h) = variables
+
+    derivatives = Dict(
+        x1 => R(u1),
+        y1 => R(v1),
+        u1 => R(- l1*x1 - l2*(x1 - x2)),
+        v1 => R(- l1*y1 - l2*(y1 - y2) - 1*h^2),
+        x2 => R(u2),
+        y2 => R(v2),
+        u2 => R(- l2*(x2 - x1)),
+        v2 => R(- l2*(y2 - y1) - 1*h^2),
+        l1 => R(0),
+        l2 => R(0),
+        h => R(0))
+
+    ideal = Ideal([x1^2 + y1^2 - 1*h^2, (x2-x1)^2 + (y2-y1)^2 - 1*h^2])
+    return ideal, derivatives, R
+end
+
 function double_pendulum()
     R, variables = polynomial_ring(GF(101),
         ["dl1","dl2","x1","y1","u1","v1","x2","y2","u2","v2","l1","l2"],

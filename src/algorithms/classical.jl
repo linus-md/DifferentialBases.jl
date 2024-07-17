@@ -73,13 +73,16 @@ function deg_stop_differential_basis(
     S_vars = [Symbol(var.first) for var in derivatives]
 
     # Start computing the differential basis
-    G1 = groebner_basis(ideal)
-    pG1 = [partial(g, derivatives) for g in cap(G1, S_vars)]
+    G1 = sig_groebner_basis(ideal.gens)
+    for g in G1
+        println(g[2])
+    end
+    pG1 = [partial(g[2], derivatives) for g in G1]
     if nf == true
-        pG1 = [normal_form(pg, Ideal(G1)) for pg in pG1]
+        pG1 = [normal_form(pg[2], Ideal(G1)) for pg in pG1]
     end
     append!(pG1, G1)
-    G2 = sig_groebner_basis(Ideal(pG1))
+    G2 = sig_groebner_basis(pG1)
     if info_level > 0
         i = 1
         println("iteration ", i)
@@ -94,12 +97,12 @@ function deg_stop_differential_basis(
             println("#G = ", length(G2))
         end
         G1 = G2
-        pG1 = [partial(g, derivatives) for g in cap(G1, S_vars)]
+        pG1 = [partial(g[2], derivatives) for g in G1]
         if nf == true
-            pG1 = [normal_form(pg, Ideal(G1)) for pg in pG1]
+            pG1 = [normal_form(pg[2], Ideal(G1)) for pg in pG1]
         end
             append!(pG1, G1)
-            G2 = sig_groebner_basis(Ideal(pG1))
+            G2 = sig_groebner_basis(pG1)
     end
     return G1
 end

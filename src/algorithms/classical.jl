@@ -2,7 +2,7 @@ using AbstractAlgebra: vars, derivative
 using AlgebraicSolving
 using AlgebraicSolving: 
     polynomial_ring, Ideal, GF, groebner_basis, 
-    normal_form, sig_groebner_basis
+    normal_form, sig_groebner_basis, total_degree, exponent_vectors, Exp
 
 function partial(q, derivatives)    
     n = length(q.parent.data.S)
@@ -104,25 +104,7 @@ function deg_stop_differential_basis(
             pG1 = [normal_form(pg, Ideal(G1)) for pg in pG1]
         end
             append!(pG1, G1)
-            println(G2)
-            # It is not homogenous here ?
-            sysl = length(G2)
-            degs = Vector{Exp}(undef, sysl)
-            @inbounds for (i, f) in enumerate(G2)
-                deg = total_degree(f)
-                if deg > typemax(Exp)
-                    error("input degrees too large.")
-                end
-                degs[i] = Exp(deg)
-                for m in exponent_vectors(f)
-                    if sum(m) != deg
-                        error("input system must be homogeneous.")
-                    end
-                end
-            end
-
-
-            G2 = sig_groebner_basis(pG1)
+            G2 = sig_groebner_basis(pG1, info_level=2)
             G2 = [g[2] for g in G2]
     end
     return G1

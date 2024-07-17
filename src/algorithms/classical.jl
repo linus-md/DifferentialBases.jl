@@ -69,6 +69,8 @@ end
 
 function deg_stop_differential_basis(
     ideal, derivatives, R, deg, nf=false, info_level=0)
+    # todo pass only polys to siggb not sigs
+    
     # Infer and create the subring
     S_vars = [Symbol(var.first) for var in derivatives]
 

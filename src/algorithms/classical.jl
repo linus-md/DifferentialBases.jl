@@ -68,12 +68,7 @@ function differential_basis(ideal, derivatives, R, nf=false, info_level=0)
 end
 
 function deg_stop_differential_basis(
-    ideal, derivatives, R, deg, nf=false, info_level=0)
-    # todo pass only polys to siggb not sigs
-    
-    # Infer and create the subring
-    S_vars = [Symbol(var.first) for var in derivatives]
-
+    ideal, derivatives, deg, info_level=0, nf=false)
     # Start computing the differential basis
     G1 = sig_groebner_basis(ideal.gens)
     G1 = [g[2] for g in G1]
@@ -83,7 +78,7 @@ function deg_stop_differential_basis(
         pG1 = [normal_form(pg, Ideal(G1)) for pg in pG1]
     end
     append!(pG1, G1)
-    G2 = sig_groebner_basis(pG1)
+    G2 = sig_groebner_basis(pG1, info_level=info_level, degbound=deg)
     G2 = [g[2] for g in G2]
     if info_level > 0
         i = 1
@@ -104,7 +99,7 @@ function deg_stop_differential_basis(
             pG1 = [normal_form(pg, Ideal(G1)) for pg in pG1]
         end
             append!(pG1, G1)
-            G2 = sig_groebner_basis(pG1, info_level=2)
+            G2 = sig_groebner_basis(pG1, info_level=info_level, degbound=deg)
             G2 = [g[2] for g in G2]
     end
     return G1

@@ -11,13 +11,13 @@ The following example is derived from a simple pendulum.
 ```julia
 using DifferentialBases: differential_basis
 using AlgebraicSolving: polynomial_ring, GF, Ideal
-R, variables = polynomial_ring(GF(101),["dl","x","y","u","v",""], internal_ordering=:degrevlex)
+R, variables = polynomial_ring(GF(101),["dl","x","y","u","v","l"], internal_ordering=:degrevlex)
 (dl,x,y,u,v,l) = variables
 derivatives = Dict(x => u, y => v, u => x*l, v => y*l - 1, l => dl)
 ideal = Ideal([x^2 + y^2 - 1])
 ```
 
-Calling `differential_basis(ideal, derivatives, R, 0)` results in the following Gröbner basis:
+Calling `differential_basis(ideal, derivatives, R, false, 0)` results in the following Gröbner basis:
 
 ```julia
 8-element Vector{Nemo.FqMPolyRingElem}:

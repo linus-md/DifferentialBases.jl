@@ -27,3 +27,11 @@ Calling `differential_basis(ideal, derivatives, R, false, 0)` results in the fol
  l*y + 100*v*u*x + u^2*y + x^2 + 100
  dl + 98*v
 ```
+
+### Installation
+
+To install DifferentialBases.jl enter the **Pkg** REPL by pressing `]` and execute
+
+```julia-repl
+add https://github.com/linus-md/DifferentialBases.jl
+```

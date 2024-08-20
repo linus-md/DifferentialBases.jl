@@ -26,18 +26,20 @@ function partial(q, derivatives)
 end
 
 """
-    cap(G, S_vars)
+    intersect(G, S_vars)
 
-    This function computes the intersection of a Groebner basis with a set of variables.
+    This function computes the intersection of a Groebner basis 
+    with a set of variables.
 
     # Arguments
-    - `G`: a Groebner basis
-    - `S_vars`: a set of variables
+    - `G`: a Groebner basis w.r.t a monomial odering that eliminates all 
+       variables except the ones in `S_vars`
+    - `S_vars`: the list of variables that are not to be eliminated
 
     # Returns
-    - the intersection of the Groebner basis with the set of variables
+    - the intersection of the Groebner basis with the subring S
 """
-function cap(G, S_vars)
+function intersect(G, S_vars)
     sub_ideal = []
     for generator in G
         symbols = [Symbol(var) for var in vars(generator)]
@@ -59,7 +61,9 @@ end
     # Arguments
     - `ideal`: an ideal
     - `derivatives`: a dictionary of derivatives
-    - `R`: a polynomial ring
+    - `R`: a polynomial ring with two blocks of variables, where the first 
+       block corresponds to the variables in `R` that are not in `derivatives` 
+       and the second block corresponds to the variables in `derivatives`
     - `nf`: a boolean indicating whether to compute the normal form
     - `info_level`: an integer indicating the level of information to print
 
@@ -75,7 +79,7 @@ function differential_basis(ideal, derivatives, R, nf=false, info_level=0)
     
     # Start computing the differential basis
     G1 = groebner_basis(ideal)
-    pG1 = [partial(g, derivatives) for g in cap(G1, S_vars)]
+    pG1 = [partial(g, derivatives) for g in intersect(G1, S_vars)]
     if nf == true
         pG1 = [normal_form(pg, Ideal(G1)) for pg in pG1]
     end
@@ -96,7 +100,7 @@ function differential_basis(ideal, derivatives, R, nf=false, info_level=0)
             println("#G = ", length(G2))
         end
         G1 = G2
-        pG1 = [partial(g, derivatives) for g in cap(G1, S_vars)]
+        pG1 = [partial(g, derivatives) for g in intersect(G1, S_vars)]
         if nf == true
             pG1 = [normal_form(pg, Ideal(G1)) for pg in pG1]
         end

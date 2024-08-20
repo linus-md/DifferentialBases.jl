@@ -7,7 +7,7 @@ using AlgebraicSolving: polynomial_ring, GF, Ideal
     For reference, please see Example 1 in the following paper: 
     [link](https://arxiv.org/abs/1909.13608).
 
-    The example can be found as example 2.5.5 in the thesis.
+    The example can be found as example 2.5.4 in the thesis.
 """
 function chem_1()
     

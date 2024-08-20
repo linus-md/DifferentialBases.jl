@@ -6,15 +6,12 @@ DifferentialBases.jl is a Julia package for computing Groebner bases in differen
 
 ### How to use DifferentialBases.jl
 
-The following example is derived from a simple pendulum.
+The following example is derived from a simple pendulum. Calling ``simple_pendulum()``loads the relevant equations.
 
 ```julia
-using DifferentialBases: differential_basis
+using DifferentialBases: differential_basis, simple_pendulum
 using AlgebraicSolving: polynomial_ring, GF, Ideal
-R, variables = polynomial_ring(GF(101),["dl","x","y","u","v","l"], internal_ordering=:degrevlex)
-(dl,x,y,u,v,l) = variables
-derivatives = Dict(x => u, y => v, u => x*l, v => y*l - 1, l => dl)
-ideal = Ideal([x^2 + y^2 - 1])
+ideal, derivatives, R =  simple_pendulum()
 ```
 
 Calling `differential_basis(ideal, derivatives, R, false, 0)` results in the following Gröbner basis:

@@ -1,5 +1,10 @@
 using AlgebraicSolving: polynomial_ring, GF, Ideal
+"""
+    simple_pendulum()
 
+    This function contains the implementation of a simple pendulum.
+    For reference see Example 2.5.1 in the thesis.
+"""
 function simple_pendulum()
     R, variables = polynomial_ring(
         GF(101),["dl","x","y","u","v",""], 
@@ -17,6 +22,12 @@ function simple_pendulum()
     return ideal, derivatives, R
 end
 
+"""
+    double_pendulum()
+
+    This function contains the implementation of a double pendulum.
+    For reference see Example 2.5.2 in the thesis.
+"""
 function double_pendulum()
     R, variables = polynomial_ring(GF(101),
         ["dl1","dl2","x1","y1","u1","v1","x2","y2","u2","v2","l1","l2"],
@@ -39,6 +50,13 @@ function double_pendulum()
     return ideal, derivatives, R
 end
 
+"""
+    triple_pendulum()
+
+    This function contains the implementation of a triple pendulum.
+    
+    For reference see Example 2.5.2 in the thesis.
+"""
 function triple_pendulum()
     R, variables = polynomial_ring(
         GF(101),["dl1","dl2","dl3","x1","y1","u1","v1","x2","y2","u2","v2",
@@ -68,6 +86,14 @@ function triple_pendulum()
     return ideal, derivatives, R
 end
 
+"""
+    masspoint_parabola()
+
+    This function contains the implementation of a masspoint restricted to
+    a parabola.
+    
+    For reference see Example 2.5.3 in the thesis.
+"""
 function masspoint_parabola()
     R, (dl, p1, p2, p3, v1, v2, v3, l) = polynomial_ring(
         GF(101),["dl","p1","p2","p3","v1","v2","v3","l"], 

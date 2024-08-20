@@ -1,7 +1,19 @@
 using AlgebraicSolving: polynomial_ring, GF, Ideal
 using AbstractAlgebra: derivative, matrix
 
-function linear_nn_2(m, n, r)
+"""
+    linear_nn_2(m, n, r)
+
+Implementation of example 2.5.7 in the thesis.
+
+# Arguments
+- `m`: number of rows in A
+- `n`: number of columns in A and rows in B
+- `r`: number of columns in B
+
+Returns the corresponding system of the two layer linear neural network
+"""
+function linear_nn_2(m, n, r)    
     R, A, B, x, y = polynomial_ring(
         GF(101),
         :A=>(1:m, 1:n),
@@ -13,7 +25,7 @@ function linear_nn_2(m, n, r)
     A, B = matrix(A), matrix(B)
 
     f = A*B*x - y
-    f = f[1]^2 + f[2]^2
+    f = sum(f.*f)
     
     derivatives = Dict(
         R[i] => derivative(f, i) for i in 1:nvars - r - m + 1)
@@ -30,6 +42,19 @@ function linear_nn_2(m, n, r)
     return ideal, derivatives, R
 end
 
+"""
+    linear_nn_3(m, n, r, s)
+
+Implementation of example 2.5.8 in the thesis.
+
+# Arguments
+- `m`: number of rows in A
+- `n`: number of columns in A and rows in B
+- `r`: number of columns in B and columns in C
+- `s`: number of rows in C
+
+Returns the corresponding system of the three layer linear neural network
+"""
 function linear_nn_3(m, n, r, s)
     R, A, B, C, x, y = polynomial_ring(
         GF(101),
@@ -43,7 +68,7 @@ function linear_nn_3(m, n, r, s)
     A, B, C = matrix(A), matrix(B), matrix(C)
 
     f = A*B*C*x - y
-    f = f[1]^2 + f[2]^2
+    f = sum(f.*f)
     
     derivatives = Dict(
         R[i] => derivative(f, i) for i in 1:nvars - s - m + 1)

@@ -1,7 +1,16 @@
 using AlgebraicSolving: polynomial_ring, GF, Ideal
 
+"""
+    chem_1()
+
+    This function contains the implementation of a chemical system. 
+    For reference, please see Example 1 in the following paper: 
+    [link](https://arxiv.org/abs/1909.13608).
+
+    The example can be found as example 2.5.5 in the thesis.
+"""
 function chem_1()
-    # See for reference example 1 in 1909.13608
+    
     R, (x1, x2, x3, x4, k1, k2, k3, T1, T2) = polynomial_ring(
         GF(101),["x1","x2","x3","x4","k1","k2","k3","T1","T2"], 
         internal_ordering=:degrevlex)
@@ -17,9 +26,15 @@ function chem_1()
     return ideal, derivatives, R
 end
 
+"""
+    akzo_nobel()
+ 
+    For reference, please see section 1.4 in the following paper: 
+    [link](https://www.math.auckland.ac.nz/deptdb/dept_reports/497.pdf).
+
+    The example can be found as example 2.5.5 in the thesis.
+"""
 function akzo_nobel()
-    # See for reference section 1.4 in 
-    # https://www.math.auckland.ac.nz/deptdb/dept_reports/497.pdf
     R, variables = polynomial_ring(
         GF(101),
         ["dx6","dx7",
@@ -61,9 +76,15 @@ function akzo_nobel()
     return ideal, derivatives, R
 end
 
+"""
+    fast_slow_reaction()
+ 
+    For reference, please see section 2.2 in the following paper: 
+    [link](https://www.sciencedirect.com/science/article/pii/S1474667017433969).
+
+    The example can be found as example 2.5.6 in the thesis.
+"""
 function fast_slow_reaction()
-    # See for reference section 2.2 in
-    # https://www.sciencedirect.com/science/article/pii/S1474667017433969
     R, variables = polynomial_ring(GF(101),
         ["dRA","dRB","dV2","dCAi","dF","dFi",
         "RA","RB","V1","V2","CA","CAi","CB","CC","F","Fi",

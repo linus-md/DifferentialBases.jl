@@ -1,17 +1,17 @@
-@testset "Algorithms -> Classical -> cap" begin
-    using DifferentialBases: cap
+@testset "Algorithms -> Classical -> intersect" begin
+    using DifferentialBases: intersect
     using AlgebraicSolving: polynomial_ring, Ideal, GF, groebner_basis
     R, (x,y,z) = polynomial_ring(GF(101),["x","y","z"], internal_ordering=:lex)
     S_vars = R.data.S[2:end]
     F1 = [y*z, x*y, z*x]
     I1 = Ideal(F1)
     G1 = groebner_basis(I1)
-    @test cap(G1, S_vars)[1] == F1[1]
+    @test intersect(G1, S_vars)[1] == F1[1]
 
     F2 = [x*z, x*z]
     I2 = Ideal(F2)
     G2 = groebner_basis(I2)
-    @test cap(G2, S_vars) == Any[]
+    @test intersect(G2, S_vars) == Any[]
 end
 
 @testset "Algorithms -> Classical -> partial" begin

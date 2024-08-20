@@ -7,7 +7,7 @@ using AlgebraicSolving: polynomial_ring, GF, Ideal
 """
 function simple_pendulum()
     R, variables = polynomial_ring(
-        GF(101),["dl","x","y","u","v",""], 
+        GF(101),["dl","x","y","u","v","l"], 
         internal_ordering=:degrevlex)
     (dl,x,y,u,v,l) = variables
 

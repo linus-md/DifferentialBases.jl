@@ -14,6 +14,15 @@ using AlgebraicSolving: polynomial_ring, GF, Ideal
 ideal, derivatives, R =  simple_pendulum()
 ```
 
+Then we have the following system:
+
+```julia-repl
+println(ideal)
+Nemo.FqMPolyRingElem[x^2 + y^2 + 100]
+println(derivatives)
+Dict{Nemo.FqMPolyRingElem, Nemo.FqMPolyRingElem}(y => v, x => u, u => x*l, v => y*l + 100, l => dl), Multivariate polynomial ring in 6 variables over GF(101)
+```
+
 Calling `differential_basis(ideal, derivatives, R, false, 0)` results in the following Gröbner basis:
 
 ```julia
@@ -27,6 +36,8 @@ Calling `differential_basis(ideal, derivatives, R, false, 0)` results in the fol
  l*y + 100*v*u*x + u^2*y + x^2 + 100
  dl + 98*v
 ```
+
+We can uncover interesting additional constraints from those equations i.e $ux + vy = 0$ describes that the motion of the masspoint of the pendulum is tangent to the rod of the pendulum. Furthermore we uncover that $u^2 + v^2 - y + 1 = 0$ which describes that the sum of potential and kinetic energy is constant i.e. energy is conserved. We learn that $dl= 3v$.
 
 ### Installation
 

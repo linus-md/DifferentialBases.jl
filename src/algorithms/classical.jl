@@ -64,7 +64,7 @@ end
 
     This function computes the differential Gröbner basis of an ideal or 
     an approximation of a full differential ideal if not all derivatives
-    are known.
+    are known. See Algorithm 4 in the thesis for reference.
 
     # Arguments
     - `ideal`: an ideal

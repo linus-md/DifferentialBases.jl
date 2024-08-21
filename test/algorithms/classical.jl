@@ -14,16 +14,16 @@
     @test intersect(G2, S_vars) == Any[]
 end
 
-@testset "Algorithms -> Classical -> partial" begin
-    using DifferentialBases: partial
+@testset "Algorithms -> Classical -> delta" begin
+    using DifferentialBases: delta
     using AlgebraicSolving: polynomial_ring, GF
     R, (x,y,z) = polynomial_ring(GF(101),["x","y","z"], internal_ordering=:lex)
     q = x^2 + y^2 + z^2
     derivatives_1 = Dict(x => y, y => y^2)
-    @test partial(q, derivatives_1) == 2*x*y + 2*y^3
+    @test delta(q, derivatives_1) == 2*x*y + 2*y^3
 
     derivatives_2 = Dict(x => y, y => y^2, z => z^2)
-    @test partial(q, derivatives_2) == 2*x*y + 2*y^3 + 2*z^3
+    @test delta(q, derivatives_2) == 2*x*y + 2*y^3 + 2*z^3
 end
 
 @testset "Algorithms -> Classical -> differential_basis" begin

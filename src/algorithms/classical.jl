@@ -2,10 +2,11 @@ using AbstractAlgebra: vars, derivative
 using AlgebraicSolving: polynomial_ring, Ideal, GF, groebner_basis, normal_form
 
 """
-    partial(q, derivatives)
+    delta(q, derivatives)
 
     This function evaluates the linear differential operator from 
     Definition 7 and Notation 3 in the thesis for a polynomial and derivatives.
+    The inputs should not explicitly depend on time.
 
     # Arguments
     - `q`: a polynomial
@@ -14,7 +15,7 @@ using AlgebraicSolving: polynomial_ring, Ideal, GF, groebner_basis, normal_form
     # Returns
     - the linear differential operator applied to the polynomial
 """
-function partial(q, derivatives)    
+function delta(q, derivatives)    
     n = length(q.parent.data.S)
     @assert length(derivatives) <= n "There can't be more derivatives than variables."
     
@@ -29,7 +30,14 @@ end
     intersect(G, S_vars)
 
     This function computes the intersection of a Groebner basis 
-    with a set of variables.
+    with a set of variables. It is important that a proper elimination
+    order is used to ensure that the variables that are to be eliminated
+    by intersection can actually be eliminated.
+
+    An example would be lexico-graphical ordering where the variables that are
+    to be eliminated are the first ones. Or alternatively and superior in
+    practice is to use block ordering where the variables that are to be
+    eliminated are in the larger block w.r.t. to the ordering.
 
     # Arguments
     - `G`: a Groebner basis w.r.t a monomial odering that eliminates all 
@@ -79,7 +87,7 @@ function differential_basis(ideal, derivatives, R, nf=false, info_level=0)
     
     # Start computing the differential basis
     G1 = groebner_basis(ideal)
-    pG1 = [partial(g, derivatives) for g in intersect(G1, S_vars)]
+    pG1 = [delta(g, derivatives) for g in intersect(G1, S_vars)]
     if nf == true
         pG1 = [normal_form(pg, Ideal(G1)) for pg in pG1]
     end
@@ -92,7 +100,7 @@ function differential_basis(ideal, derivatives, R, nf=false, info_level=0)
         println("#G = ", length(G1))
     end
 
-    # Repeat until closed under partial
+    # Repeat until closed under delta
     while G1 != G2
         if info_level > 0
             i += 1
@@ -100,7 +108,7 @@ function differential_basis(ideal, derivatives, R, nf=false, info_level=0)
             println("#G = ", length(G2))
         end
         G1 = G2
-        pG1 = [partial(g, derivatives) for g in intersect(G1, S_vars)]
+        pG1 = [delta(g, derivatives) for g in intersect(G1, S_vars)]
         if nf == true
             pG1 = [normal_form(pg, Ideal(G1)) for pg in pG1]
         end

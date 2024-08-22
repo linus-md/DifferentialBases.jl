@@ -1,5 +1,5 @@
-using AbstractAlgebra: vars, derivative
-using AlgebraicSolving: polynomial_ring, Ideal, GF, groebner_basis, normal_form
+using AbstractAlgebra
+using AlgebraicSolving
 
 """
     delta(q, derivatives)
@@ -21,7 +21,7 @@ function delta(q, derivatives)
     
     result = 0
     for (var, value) in derivatives
-        result += value * derivative(q, var)
+        result += value * AbstractAlgebra.derivative(q, var)
     end
     return result
 end
@@ -50,7 +50,7 @@ end
 function intersect(G, S_vars)
     sub_ideal = []
     for generator in G
-        symbols = [Symbol(var) for var in vars(generator)]
+        symbols = [Symbol(var) for var in AbstractAlgebra.vars(generator)]
         if issubset(symbols, S_vars)
             push!(sub_ideal, generator)
         end
@@ -88,11 +88,11 @@ function differential_basis(ideal, derivatives, R, nf=false, info_level=0)
     # Start computing the differential basis
     G1 = groebner_basis(ideal)
     pG1 = [delta(g, derivatives) for g in intersect(G1, S_vars)]
-    if nf == true
-        pG1 = [normal_form(pg, Ideal(G1)) for pg in pG1]
+    if nf
+        pG1 = [AlgebraicSolving.normal_form(pg, AlgebraicSolving.Ideal(G1)) for pg in pG1]
     end
     append!(pG1, G1)
-    G2 = groebner_basis(Ideal(pG1), eliminate=eliminate,
+    G2 = groebner_basis(AlgebraicSolving.Ideal(pG1), eliminate=eliminate,
                         intersect=false, info_level=info_level)
     if info_level > 0
         i = 1
@@ -110,10 +110,10 @@ function differential_basis(ideal, derivatives, R, nf=false, info_level=0)
         G1 = G2
         pG1 = [delta(g, derivatives) for g in intersect(G1, S_vars)]
         if nf == true
-            pG1 = [normal_form(pg, Ideal(G1)) for pg in pG1]
+            pG1 = [AlgebraicSolving.normal_form(pg, AlgebraicSolving.Ideal(G1)) for pg in pG1]
         end
             append!(pG1, G1)
-        G2 = groebner_basis(Ideal(pG1), eliminate=eliminate,
+        G2 = groebner_basis(AlgebraicSolving.Ideal(pG1), eliminate=eliminate,
                             intersect=false, info_level=info_level)
     end
     return G1

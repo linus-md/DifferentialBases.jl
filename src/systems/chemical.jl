@@ -1,4 +1,4 @@
-using AlgebraicSolving: polynomial_ring, GF, Ideal
+using AlgebraicSolving
 
 """
     chem_1()
@@ -11,8 +11,8 @@ using AlgebraicSolving: polynomial_ring, GF, Ideal
 """
 function chem_1()
     
-    R, (x1, x2, x3, x4, k1, k2, k3, T1, T2) = polynomial_ring(
-        GF(101),["x1","x2","x3","x4","k1","k2","k3","T1","T2"], 
+    R, (x1, x2, x3, x4, k1, k2, k3, T1, T2) = AlgebraicSolving.polynomial_ring(
+        AlgebraicSolving.GF(101),["x1","x2","x3","x4","k1","k2","k3","T1","T2"], 
         internal_ordering=:degrevlex)
     
     derivatives = Dict(
@@ -22,7 +22,7 @@ function chem_1()
         x4 => k2*x2*x3 - k3*x4,
         k1 => 0, k2 => 0, k3 => 0, T1 => 0, T2 => 0)
 
-    ideal = Ideal([x1 + x2 - T1, x3 + x4 - T2])
+    ideal = AlgebraicSolving.Ideal([x1 + x2 - T1, x3 + x4 - T2])
     return ideal, derivatives, R
 end
 
@@ -35,8 +35,8 @@ end
     The example can be found as example 2.5.5 in the thesis.
 """
 function akzo_nobel()
-    R, variables = polynomial_ring(
-        GF(101),
+    R, variables = AlgebraicSolving.polynomial_ring(
+        AlgebraicSolving.GF(101),
         ["dx6","dx7",
         "x1","x2","x3","x4","x5","x6","x7",
         "k1","k2","k3","k4","K","klA","Ks","pCO2","H"],
@@ -72,7 +72,7 @@ function akzo_nobel()
         pCO2 => 0,
         H => 0)
 
-    ideal = Ideal([Ks * x1 * x4 - x6, x7^2 - x2])
+    ideal = AlgebraicSolving.Ideal([Ks * x1 * x4 - x6, x7^2 - x2])
     return ideal, derivatives, R
 end
 
@@ -85,7 +85,7 @@ end
     The example can be found as example 2.5.6 in the thesis.
 """
 function fast_slow_reaction()
-    R, variables = polynomial_ring(GF(101),
+    R, variables = AlgebraicSolving.polynomial_ring(AlgebraicSolving.GF(101),
         ["dRA","dRB","dV2","dCAi","dF","dFi",
         "RA","RB","V1","V2","CA","CAi","CB","CC","F","Fi",
         "Keq","kB"],
@@ -110,6 +110,6 @@ function fast_slow_reaction()
         Keq => 0,
         kB => 0)
 
-    ideal = Ideal([CA - CB * Keq, RB - kB * CB, V1*V2-1])
+    ideal = AlgebraicSolving.Ideal([CA - CB * Keq, RB - kB * CB, V1*V2-1])
     return ideal, derivatives, R
 end

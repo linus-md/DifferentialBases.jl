@@ -82,11 +82,6 @@ function differential_basis(ideal, derivatives, R, nf=false, info_level=0)
     # Infer and create the subring
     n = R.data.nvars
     S_vars = [Symbol(var.first) for var in derivatives]
-    for var in R.data.S
-        if var in derivative
-            S_vars = filter!(x -> x != var, S_vars)
-        end
-    end
     k = length(S_vars)
     eliminate = n - k
     

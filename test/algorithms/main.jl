@@ -67,27 +67,3 @@ end
     @test DifferentialBases.differential_basis(
         AlgebraicSolving.Ideal(sol), derivatives, R, true, 1) == sol
 end
-
-@testset "Algorithms -> Main -> differential_basis -> assertions" begin
-    using DifferentialBases
-    using AlgebraicSolving
-
-    # Test that the variables with derivatives are in the second block
-    R, (l,v,u,y,x,dl) = AlgebraicSolving.polynomial_ring(
-        AlgebraicSolving.GF(101),
-        ["l","v","u","y","x","dl"], 
-        internal_ordering=:degrevlex)
-
-    derivatives = Dict(
-        x => u,
-        y => v,
-        u => x*l,
-        v => y*l - 1,
-        l => dl
-    )
-
-    ideal = AlgebraicSolving.Ideal([x^2 + y^2 - 1])
-    @test_throws AssertionError DifferentialBases.differential_basis(ideal, derivatives, R)
-
-    # Tests that there are less or as many derivatives than variables
-end

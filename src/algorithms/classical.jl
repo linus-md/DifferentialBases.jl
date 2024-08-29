@@ -2,7 +2,7 @@ using AbstractAlgebra
 using AlgebraicSolving
 
 """
-    delta(q, derivatives)
+    diff_op(q, derivatives)
 
     This function evaluates the linear differential operator from 
     Definition 7 and Notation 3 in the thesis for a polynomial and derivatives.
@@ -15,7 +15,7 @@ using AlgebraicSolving
     # Returns
     - the linear differential operator applied to the polynomial
 """
-function delta(q, derivatives)    
+function diff_op(q, derivatives)    
     n = length(q.parent.data.S)
     @assert length(derivatives) <= n "There can't be more derivatives than variables."
     
@@ -87,7 +87,7 @@ function differential_basis(ideal, derivatives, R, nf=false, info_level=0)
     
     # Start computing the differential basis
     G1 = groebner_basis(ideal)
-    pG1 = [delta(g, derivatives) for g in intersect(G1, S_vars)]
+    pG1 = [diff_op(g, derivatives) for g in intersect(G1, S_vars)]
     if nf
         pG1 = [AlgebraicSolving.normal_form(pg, AlgebraicSolving.Ideal(G1)) for pg in pG1]
     end
@@ -100,7 +100,7 @@ function differential_basis(ideal, derivatives, R, nf=false, info_level=0)
         println("#G = ", length(G1))
     end
 
-    # Repeat until closed under delta
+    # Repeat until closed under diff_op
     while G1 != G2
         if info_level > 0
             i += 1
@@ -108,7 +108,7 @@ function differential_basis(ideal, derivatives, R, nf=false, info_level=0)
             println("#G = ", length(G2))
         end
         G1 = G2
-        pG1 = [delta(g, derivatives) for g in intersect(G1, S_vars)]
+        pG1 = [diff_op(g, derivatives) for g in intersect(G1, S_vars)]
         if nf == true
             pG1 = [AlgebraicSolving.normal_form(pg, AlgebraicSolving.Ideal(G1)) for pg in pG1]
         end

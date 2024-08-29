@@ -5,7 +5,7 @@
         AlgebraicSolving.GF(101),
         ["x","y","z"],
         internal_ordering=:lex)
-        
+
     S_vars = R.data.S[2:end]
     F1 = [y*z, x*y, z*x]
     I1 = AlgebraicSolving.Ideal(F1)
@@ -18,7 +18,7 @@
     @test DifferentialBases.intersect(G2, S_vars) == Any[]
 end
 
-@testset "Algorithms -> Classical -> delta" begin
+@testset "Algorithms -> Classical -> diff_op" begin
     using DifferentialBases
     using AlgebraicSolving
     R, (x,y,z) = AlgebraicSolving.polynomial_ring(
@@ -28,10 +28,10 @@ end
 
     q = x^2 + y^2 + z^2
     derivatives_1 = Dict(x => y, y => y^2)
-    @test DifferentialBases.delta(q, derivatives_1) == 2*x*y + 2*y^3
+    @test DifferentialBases.diff_op(q, derivatives_1) == 2*x*y + 2*y^3
 
     derivatives_2 = Dict(x => y, y => y^2, z => z^2)
-    @test DifferentialBases.delta(q, derivatives_2) == 2*x*y + 2*y^3 + 2*z^3
+    @test DifferentialBases.diff_op(q, derivatives_2) == 2*x*y + 2*y^3 + 2*z^3
 end
 
 @testset "Algorithms -> Classical -> differential_basis" begin

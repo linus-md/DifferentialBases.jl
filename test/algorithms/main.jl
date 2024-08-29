@@ -1,4 +1,4 @@
-@testset "Algorithms -> Classical -> intersect" begin
+@testset "Algorithms -> Main -> intersect" begin
     using DifferentialBases
     using AlgebraicSolving
     R, (x,y,z) = AlgebraicSolving.polynomial_ring(
@@ -18,7 +18,7 @@
     @test DifferentialBases.intersect(G2, S_vars) == Any[]
 end
 
-@testset "Algorithms -> Classical -> diff_op" begin
+@testset "Algorithms -> Main -> diff_op" begin
     using DifferentialBases
     using AlgebraicSolving
     R, (x,y,z) = AlgebraicSolving.polynomial_ring(
@@ -34,7 +34,7 @@ end
     @test DifferentialBases.diff_op(q, derivatives_2) == 2*x*y + 2*y^3 + 2*z^3
 end
 
-@testset "Algorithms -> Classical -> differential_basis" begin
+@testset "Algorithms -> Main -> differential_basis" begin
     using DifferentialBases
     using AlgebraicSolving
 
@@ -66,4 +66,28 @@ end
     @test DifferentialBases.differential_basis(ideal, derivatives, R) == sol
     @test DifferentialBases.differential_basis(
         AlgebraicSolving.Ideal(sol), derivatives, R, true, 1) == sol
+end
+
+@testset "Algorithms -> Main -> differential_basis -> assertions" begin
+    using DifferentialBases
+    using AlgebraicSolving
+
+    # Test that the variables with derivatives are in the second block
+    R, (l,v,u,y,x,dl) = AlgebraicSolving.polynomial_ring(
+        AlgebraicSolving.GF(101),
+        ["l","v","u","y","x","dl"], 
+        internal_ordering=:degrevlex)
+
+    derivatives = Dict(
+        x => u,
+        y => v,
+        u => x*l,
+        v => y*l - 1,
+        l => dl
+    )
+
+    ideal = AlgebraicSolving.Ideal([x^2 + y^2 - 1])
+    @test_throws AssertionError DifferentialBases.differential_basis(ideal, derivatives, R)
+
+    # Tests that there are less or as many derivatives than variables
 end

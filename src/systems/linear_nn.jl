@@ -65,7 +65,9 @@ function linear_nn_3(m, n, r, s)
         :y => (1:m))
 
     nvars = m*n + n*r + r*s + s+m
-    A, B, C = AbstractAlgebra.matrix(A), AbstractAlgebra.matrix(B), AbstractAlgebra.matrix(C)
+    A = AbstractAlgebra.matrix(A)
+    B = AbstractAlgebra.matrix(B)
+    C = AbstractAlgebra.matrix(C)
 
     f = A*B*C*x - y
     f = sum(f.*f)

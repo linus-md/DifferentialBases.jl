@@ -5,6 +5,19 @@ function activation_function(x)
     return x^2
 end
 
+
+"""
+    poly_nn_2(m, n, r)
+
+Implementation of example 2.5.9 in the thesis.
+
+# Arguments
+- `m`: number of rows in A
+- `n`: number of columns in A and rows in B
+- `r`: number of columns in B
+
+Returns the corresponding system of the two layer polynomial neural network
+"""
 function poly_nn_2(m, n, r, activation=activation_function)
     R, A, B, x, y = polynomial_ring(
         GF(101),

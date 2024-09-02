@@ -17,7 +17,8 @@ using AlgebraicSolving
 """
 function _diff_op(q, derivatives)    
     n = length(q.parent.data.S)
-    @assert length(derivatives) <= n "There can't be more derivatives than variables."
+    @assert length(derivatives) <= n 
+        "There can't be more derivatives than variables."
     
     result = 0
     for (var, value) in derivatives
@@ -73,7 +74,7 @@ end
     # Returns
     - the new ring
     - the new variables
-    - a map_old_new from the old variables to the new variables
+    - a map from the old variables to the new variables
 """
 function _manage_rings(derivatives, R)
     S_proper = []
@@ -84,7 +85,7 @@ function _manage_rings(derivatives, R)
     index_n_el = s + 1
     index_el = 1
 
-    # Move the variables to the correct blocks and create a map_old_new
+    # Move the variables to the correct blocks and create a map
     for var in R.data.S
         if Symbol(var) in [Symbol(key) for key in keys(derivatives)]
             push!(S_proper, Symbol(var))
@@ -99,30 +100,30 @@ function _manage_rings(derivatives, R)
 
     # Create new ring, where the first block is the eliminated variables
     R_vars_proper = append!(R_elim, S_proper)
-    R_new_vars = [string(var) for var in R_vars_proper]
-    R_new, R_new_vars = AlgebraicSolving.polynomial_ring(
-        base_ring(R), R_new_vars, internal_ordering=:degrevlex)
+    R_n_vars = [string(var) for var in R_vars_proper]
+    R_n, R_n_vars = AlgebraicSolving.polynomial_ring(
+        base_ring(R), R_n_vars, internal_ordering=:degrevlex)
     
-    return R_new, R_new_vars, map_old_new
+    return R_n, R_n_vars, map_old_new
 end
 
 
 """
-    _swap_vars(poly, R_new, R_new_vars, map_old_new)
+    _swap_vars(poly, R_n, R_n_vars, map_old_new)
 
     This function swaps the variables in a polynomial to a new ring.
 
     # Arguments
     - `poly`: a polynomial
-    - `R_new`: a new ring
-    - `R_new_vars`: the new variables
-    - `map_old_new`: a map_old_new from the old variables to the new variables
+    - `R_n`: a new ring
+    - `R_n_vars`: the new variables
+    - `map_old_new`: a map from the old variables to the new variables
 
     # Returns
     - the polynomial in the new ring
 """
-function _swap_vars(poly, R_vars, R_new_vars, map_old_new)
-    vars_subst = [R_new_vars[map_old_new[Symbol(var)]] for var in R_vars]
+function _swap_vars(poly, R_vars, R_n_vars, map_old_new)
+    vars_subst = [R_n_vars[map_old_new[Symbol(var)]] for var in R_vars]
     if poly == 0
         return poly
     end
@@ -151,29 +152,31 @@ end
     # Returns
     - the differential Gröbner basis
 """
-function differential_basis(ideal, derivatives, R, R_vars = [], nf=false, info_level=0)
+function differential_basis(
+        ideal, derivatives, R, R_vars = [], nf=false, info_level=0
+    )
+    
     n = R.data.nvars
     s = length(derivatives)    
     eliminate = n - s
 
-    # If elimination is necessary reorganize the ring and substitute the variables
+    # If elimination is necessary reorganize the ring
     if eliminate > 0
-        R_new, R_new_vars, map_old_new = _manage_rings(derivatives, R)
+        R_n, R_n_vars, map_old_new = _manage_rings(derivatives, R)
         
-        ideal_new_gens = [_swap_vars(elem, R_vars, R_new_vars, map_old_new) for elem in ideal.gens]
+        ideal_new_gens = [
+            _swap_vars(f, R_vars, R_n_vars, map_old_new) for f in ideal.gens]
         ideal = AlgebraicSolving.Ideal(ideal_new_gens)  
 
         derivatives_new = Dict()
         for (var, expr) in derivatives
-            if typeof(expr) == Number
-                expr = R(expr) # R_new ? TODO
-            end
-            derivatives_new[_swap_vars(var, R_vars, R_new_vars, map_old_new)] = _swap_vars(expr, R_vars, R_new_vars, map_old_new)
+            derivatives_new[_swap_vars(var, R_vars, R_n_vars, map_old_new)] = 
+                _swap_vars(expr, R_vars, R_n_vars, map_old_new)
         end
         derivatives = derivatives_new
 
         # Infer and create the subring
-        S_vars = [Symbol(var) for var in R_new_vars[eliminate+1:end]]
+        S_vars = [Symbol(var) for var in R_n_vars[eliminate+1:end]]
     else 
         S_vars = R.data.S
     end 
@@ -183,7 +186,8 @@ function differential_basis(ideal, derivatives, R, R_vars = [], nf=false, info_l
 
     pG1 = [_diff_op(g, derivatives) for g in _intersect(G1, S_vars)]
     if nf
-        pG1 = [AlgebraicSolving.normal_form(pg, AlgebraicSolving.Ideal(G1)) for pg in pG1]
+        reducer = AlgebraicSolving.Ideal(G1)
+        pG1 = [AlgebraicSolving.normal_form(pg, reducer) for pg in pG1]
     end
 
     append!(pG1, G1)
@@ -206,7 +210,8 @@ function differential_basis(ideal, derivatives, R, R_vars = [], nf=false, info_l
         G1 = G2
         pG1 = [_diff_op(g, derivatives) for g in _intersect(G1, S_vars)]
         if nf == true
-            pG1 = [AlgebraicSolving.normal_form(pg, AlgebraicSolving.Ideal(G1)) for pg in pG1]
+            reducer = AlgebraicSolving.Ideal(G1)
+            pG1 = [AlgebraicSolving.normal_form(pg, reducer) for pg in pG1]
         end
         
         append!(pG1, G1)

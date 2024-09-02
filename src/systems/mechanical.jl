@@ -47,7 +47,9 @@ function double_pendulum()
         l1 => dl1,
         l2 => dl2)
 
-    ideal = AlgebraicSolving.Ideal([x1^2 + y1^2 - 1, (x2-x1)^2 + (y2-y1)^2 - 1])
+    ideal = AlgebraicSolving.Ideal([
+        x1^2 + y1^2 - 1, (x2-x1)^2 + (y2-y1)^2 - 1
+    ])
     return ideal, derivatives, R, R_vars
 end
 
@@ -83,8 +85,10 @@ function triple_pendulum()
         l2 => dl2,
         l3 => dl3)
 
-    ideal = AlgebraicSolving.Ideal(
-        [x1^2 + y1^2 - 1, (x2-x1)^2 + (y2-y1)^2 - 1, (x3-x2)^2 + (y3-y2)^2 - 1])
+    ideal = AlgebraicSolving.Ideal([
+        x1^2 + y1^2 - 1, (x2-x1)^2 + (y2-y1)^2 - 1, 
+        (x3-x2)^2 + (y3-y2)^2 - 1
+    ])
     return ideal, derivatives, R, R_vars
 end
 

@@ -58,6 +58,75 @@ function intersect(G, S_vars)
     return sub_ideal
 end
 
+"""
+    _manage_rings(ideal, derivatives, R)
+
+    This function creates a new ring that permits the elimination of variables.
+
+    # Arguments
+    - `ideal`: an ideal
+    - `derivatives`: a dictionary of derivatives
+    - `R`: a polynomial ring with two blocks of variables, where the first 
+       block corresponds to the variables in `R` that are not in `derivatives` 
+       and the second block corresponds to the variables in `derivatives`
+
+    # Returns
+    - the new ring
+    - the new variables
+    - a map from the old variables to the new variables
+"""
+function _manage_rings(derivatives, R)
+    S_proper = []
+    R_elim = []
+    s = length(R.data.S) - length(derivatives)
+    map = Dict()
+    
+    index_n_el = s + 1
+    index_el = 1
+
+    # Move the variables to the correct blocks and create a map
+    for var in R.data.S
+        if Symbol(var) in [Symbol(key) for key in keys(derivatives)]
+            push!(S_proper, Symbol(var))
+            map[Symbol(var)] = index_n_el
+            index_n_el += 1
+        else    
+            push!(R_elim, Symbol(var))
+            map[Symbol(var)] = index_el
+            index_el += 1
+        end
+    end
+
+    # Create new ring, where the first block is the eliminated variables
+    R_vars_proper = append!(R_elim, S_proper)
+    R_new_vars = [string(var) for var in R_vars_proper]
+    R_new, R_new_vars = AlgebraicSolving.polynomial_ring(
+        base_ring(R), R_new_vars, internal_ordering=:degrevlex)
+    
+    return R_new, R_new_vars, map
+end
+
+
+"""
+    _swap_vars(poly, R_new, R_new_vars, map)
+
+    This function swaps the variables in a polynomial to a new ring.
+
+    # Arguments
+    - `poly`: a polynomial
+    - `R_new`: a new ring
+    - `R_new_vars`: the new variables
+    - `map`: a map from the old variables to the new variables
+
+    # Returns
+    - the polynomial in the new ring
+"""
+function _swap_vars(poly, R_vars, R_new_vars, map)
+    vars_subst = [R_new_vars[map[Symbol(var)]] for var in R_vars]
+    poly_new = poly(vars_subst...)
+    return poly_new
+end
+
 
 """
     differential_basis(ideal, derivatives, R, nf=false, info_level=0)
@@ -72,18 +141,34 @@ end
     - `R`: a polynomial ring with two blocks of variables, where the first 
        block corresponds to the variables in `R` that are not in `derivatives` 
        and the second block corresponds to the variables in `derivatives`
+    - `R_vars`: the variables in the ring, only needed for elimination
     - `nf`: a boolean indicating whether to compute the normal form
     - `info_level`: an integer indicating the level of information to print
 
     # Returns
     - the differential Gröbner basis
 """
-function differential_basis(ideal, derivatives, R, nf=false, info_level=0)
-    # Infer and create the subring
+function differential_basis(ideal, derivatives, R, R_vars = [], nf=false, info_level=0)
     n = R.data.nvars
-    S_vars = [Symbol(var.first) for var in derivatives]
-    k = length(S_vars)
-    eliminate = n - k
+    s = length(derivatives)    
+    eliminate = n - s
+
+    # If elimination is necessary reorganize the ring and substitute the variables
+    if eliminate > 0
+        R_new, R_new_vars, map = _manage_rings(derivatives, R)
+        
+        ideal_new_gens = [_swap_vars(elem, R_vars, R_new_vars, map) for elem in ideal.gens]
+        ideal = AlgebraicSolving.Ideal(ideal_new_gens)
+
+        derivatives_new = Dict()
+        for (var, expr) in derivatives
+            derivatives_new[_swap_vars(var, R_vars, R_new_vars, map)] = _swap_vars(expr, R_vars, R_new_vars, map)
+        end
+        derivatives = derivatives_new
+    end 
+
+    # Infer and create the subring
+    S_vars = [Symbol(var) for var in R_new_vars[eliminate+1:end]]
     
     # Start computing the differential basis
     G1 = groebner_basis(ideal)

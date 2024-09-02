@@ -31,5 +31,5 @@ function poly_nn_2(m, n, r, activation=activation_function)
         push!(C_flat, elem)
     end
     ideal = Ideal(C_flat)
-    return ideal, derivatives, R
+    return ideal, derivatives, R, []
 end

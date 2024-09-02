@@ -38,10 +38,12 @@ end
     using DifferentialBases
     using AlgebraicSolving
 
-    R, (dl,l,v,u,y,x) = AlgebraicSolving.polynomial_ring(
+    R, R_vars = AlgebraicSolving.polynomial_ring(
         AlgebraicSolving.GF(101),
         ["dl","l","v","u","y","x"], 
         internal_ordering=:degrevlex)
+
+    (dl, l, v, u, y, x) = R_vars
 
     derivatives = Dict(
         x => u,
@@ -50,6 +52,8 @@ end
         v => y*l - 1,
         l => dl
     )
+
+    ideal = AlgebraicSolving.Ideal([x^2 + y^2 - 1])
 
     sol = [
         y^2 + x^2 + 100,
@@ -62,8 +66,42 @@ end
         dl + 98*v
     ]
 
-    ideal = AlgebraicSolving.Ideal([x^2 + y^2 - 1])
-    @test DifferentialBases.differential_basis(ideal, derivatives, R) == sol
     @test DifferentialBases.differential_basis(
-        AlgebraicSolving.Ideal(sol), derivatives, R, true, 1) == sol
+        ideal, derivatives, R, R_vars) == sol
+    @test DifferentialBases.differential_basis(
+        AlgebraicSolving.Ideal(sol), derivatives, R, R_vars, true, 1) == sol
+end
+
+@testset "Algorithms -> Main -> Ring helpers" begin
+    R, R_vars = AlgebraicSolving.polynomial_ring(
+        AlgebraicSolving.GF(101),
+        ["l","v","u","y","x","dl"], 
+        internal_ordering=:degrevlex)
+
+    (l, v, u, y, x, dl) = R_vars
+
+    derivatives = Dict(
+        x => u,
+        y => v,
+        u => x*l,
+        v => y*l - 1,
+        l => dl
+    )
+
+    ideal = AlgebraicSolving.Ideal([x^2 + y^2 - 1])
+
+    R_new, R_new_vars, map = DifferentialBases._manage_rings(derivatives, R)
+
+    R_1, R_1_vars = AlgebraicSolving.polynomial_ring(
+        AlgebraicSolving.GF(101),
+        ["dl","l","v","u","y","x",], 
+        internal_ordering=:degrevlex)
+    
+    
+    @test R_new == R_1
+
+    ideal_new_gens = [DifferentialBases._swap_vars(elem, R_vars, R_new_vars, map) for elem in ideal.gens]
+    ideal = AlgebraicSolving.Ideal(ideal_new_gens)
+
+    @test parent(ideal[1]) == R_new
 end

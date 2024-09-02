@@ -39,7 +39,7 @@ function linear_nn_2(m, n, r)
         push!(C_flat, elem)
     end
     ideal = AlgebraicSolving.Ideal(C_flat)
-    return ideal, derivatives, R
+    return ideal, derivatives, R, []
 end
 
 """
@@ -86,5 +86,5 @@ function linear_nn_3(m, n, r, s)
         push!(D_flat, elem)
     end
     ideal = AlgebraicSolving.Ideal(D_flat)
-    return ideal, derivatives, R
+    return ideal, derivatives, R, []
 end

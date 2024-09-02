@@ -7,10 +7,10 @@ using AlgebraicSolving
     For reference see Example 2.5.1 in the thesis.
 """
 function simple_pendulum()
-    R, variables = AlgebraicSolving.polynomial_ring(
+    R, R_vars = AlgebraicSolving.polynomial_ring(
         AlgebraicSolving.GF(101),["dl","x","y","u","v","l"], 
         internal_ordering=:degrevlex)
-    (dl,x,y,u,v,l) = variables
+    (dl,x,y,u,v,l) = R_vars
 
     derivatives = Dict(
         x => u,
@@ -20,7 +20,7 @@ function simple_pendulum()
         l => dl)
 
     ideal = AlgebraicSolving.Ideal([x^2 + y^2 - 1])
-    return ideal, derivatives, R
+    return ideal, derivatives, R, R_vars
 end
 
 """
@@ -30,10 +30,10 @@ end
     For reference see Example 2.5.2 in the thesis.
 """
 function double_pendulum()
-    R, variables = AlgebraicSolving.polynomial_ring(AlgebraicSolving.GF(101),
+    R, R_vars = AlgebraicSolving.polynomial_ring(AlgebraicSolving.GF(101),
         ["dl1","dl2","x1","y1","u1","v1","x2","y2","u2","v2","l1","l2"],
         internal_ordering=:degrevlex)
-    (dl1,dl2,x1,y1,u1,v1,x2,y2,u2,v2,l1,l2) = variables
+    (dl1,dl2,x1,y1,u1,v1,x2,y2,u2,v2,l1,l2) = R_vars
 
     derivatives = Dict(
         x1 => u1,
@@ -48,7 +48,7 @@ function double_pendulum()
         l2 => dl2)
 
     ideal = AlgebraicSolving.Ideal([x1^2 + y1^2 - 1, (x2-x1)^2 + (y2-y1)^2 - 1])
-    return ideal, derivatives, R
+    return ideal, derivatives, R, R_vars
 end
 
 """
@@ -59,12 +59,12 @@ end
     For reference see Example 2.5.2 in the thesis.
 """
 function triple_pendulum()
-    R, variables = AlgebraicSolving.polynomial_ring(
+    R, R_vars = AlgebraicSolving.polynomial_ring(
         AlgebraicSolving.GF(101),
         ["dl1","dl2","dl3","x1","y1","u1","v1","x2","y2",
         "u2","v2","x3","y3","u3","v3","l1","l2","l3"],
         internal_ordering=:degrevlex)
-    (dl1,dl2,dl3,x1,y1,u1,v1,x2,y2,u2,v2,x3,y3,u3,v3,l1,l2,l3) = variables
+    (dl1,dl2,dl3,x1,y1,u1,v1,x2,y2,u2,v2,x3,y3,u3,v3,l1,l2,l3) = R_vars
     
     derivatives = Dict(
         x1 => u1,
@@ -85,7 +85,7 @@ function triple_pendulum()
 
     ideal = AlgebraicSolving.Ideal(
         [x1^2 + y1^2 - 1, (x2-x1)^2 + (y2-y1)^2 - 1, (x3-x2)^2 + (y3-y2)^2 - 1])
-    return ideal, derivatives, R
+    return ideal, derivatives, R, R_vars
 end
 
 """
@@ -97,10 +97,11 @@ end
     For reference see Example 2.5.3 in the thesis.
 """
 function masspoint_parabola()
-    R, (dl, p1, p2, p3, v1, v2, v3, l) = AlgebraicSolving.polynomial_ring(
+    R, R_vars = AlgebraicSolving.polynomial_ring(
         AlgebraicSolving.GF(101),["dl","p1","p2","p3","v1","v2","v3","l"], 
         internal_ordering=:degrevlex)
     
+        (dl, p1, p2, p3, v1, v2, v3, l) = R_vars
     derivatives = Dict(    
         p1 => v1,
         p2 => v2,
@@ -111,5 +112,5 @@ function masspoint_parabola()
         l => dl)
 
     ideal = AlgebraicSolving.Ideal([p1^2 + p2^2 - p3])
-    return ideal, derivatives, R
+    return ideal, derivatives, R, R_vars
 end

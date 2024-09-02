@@ -1,21 +1,26 @@
 
 @testset "Systems -> mechanical" begin
-    using DifferentialBases: 
-        simple_pendulum, double_pendulum, triple_pendulum, masspoint_parabola
+    using DifferentialBases
 
-    ideal, derivatives, R = simple_pendulum()
+    ideal, derivatives, R, R_vars = DifferentialBases.simple_pendulum()
     @test length(ideal.gens) == 1
     @test length(derivatives) == 5
 
-    ideal, derivatives, R = double_pendulum()
+    res = DifferentialBases.differential_basis(ideal, derivatives, R, R_vars)
+    @test length(res) == 8
+
+    ideal, derivatives, R, R_vars = DifferentialBases.double_pendulum()
     @test length(ideal.gens) == 2
     @test length(derivatives) == 10
 
-    ideal, derivatives, R = triple_pendulum()
+    ideal, derivatives, R, R_vars = DifferentialBases.triple_pendulum()
     @test length(ideal.gens) == 3
     @test length(derivatives) == 15
 
-    ideal, derivatives, R = masspoint_parabola()
+    ideal, derivatives, R, R_vars = DifferentialBases.point_mass_parabola()
     @test length(ideal.gens) == 1
     @test length(derivatives) == 7
+
+    res = DifferentialBases.differential_basis(ideal, derivatives, R, R_vars)
+    @test length(res) == 11
 end

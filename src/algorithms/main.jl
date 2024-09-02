@@ -2,7 +2,7 @@ using AbstractAlgebra
 using AlgebraicSolving
 
 """
-    diff_op(q, derivatives)
+    _diff_op(q, derivatives)
 
     This function evaluates the linear differential operator from 
     Definition 7 and Notation 3 in the thesis for a polynomial and derivatives.
@@ -15,7 +15,7 @@ using AlgebraicSolving
     # Returns
     - the linear differential operator applied to the polynomial
 """
-function diff_op(q, derivatives)    
+function _diff_op(q, derivatives)    
     n = length(q.parent.data.S)
     @assert length(derivatives) <= n "There can't be more derivatives than variables."
     
@@ -27,7 +27,7 @@ function diff_op(q, derivatives)
 end
 
 """
-    intersect(G, S_vars)
+    _intersect(G, S_vars)
 
     This function computes the intersection of a Groebner basis 
     with a set of variables. It is important that a proper elimination
@@ -47,7 +47,7 @@ end
     # Returns
     - the intersection of the Groebner basis with the subring S
 """
-function intersect(G, S_vars)
+function _intersect(G, S_vars)
     sub_ideal = []
     for generator in G
         symbols = [Symbol(var) for var in AbstractAlgebra.vars(generator)]
@@ -73,26 +73,26 @@ end
     # Returns
     - the new ring
     - the new variables
-    - a map from the old variables to the new variables
+    - a map_old_new from the old variables to the new variables
 """
 function _manage_rings(derivatives, R)
     S_proper = []
     R_elim = []
     s = length(R.data.S) - length(derivatives)
-    map = Dict()
+    map_old_new = Dict()
     
     index_n_el = s + 1
     index_el = 1
 
-    # Move the variables to the correct blocks and create a map
+    # Move the variables to the correct blocks and create a map_old_new
     for var in R.data.S
         if Symbol(var) in [Symbol(key) for key in keys(derivatives)]
             push!(S_proper, Symbol(var))
-            map[Symbol(var)] = index_n_el
+            map_old_new[Symbol(var)] = index_n_el
             index_n_el += 1
         else    
             push!(R_elim, Symbol(var))
-            map[Symbol(var)] = index_el
+            map_old_new[Symbol(var)] = index_el
             index_el += 1
         end
     end
@@ -103,12 +103,12 @@ function _manage_rings(derivatives, R)
     R_new, R_new_vars = AlgebraicSolving.polynomial_ring(
         base_ring(R), R_new_vars, internal_ordering=:degrevlex)
     
-    return R_new, R_new_vars, map
+    return R_new, R_new_vars, map_old_new
 end
 
 
 """
-    _swap_vars(poly, R_new, R_new_vars, map)
+    _swap_vars(poly, R_new, R_new_vars, map_old_new)
 
     This function swaps the variables in a polynomial to a new ring.
 
@@ -116,13 +116,16 @@ end
     - `poly`: a polynomial
     - `R_new`: a new ring
     - `R_new_vars`: the new variables
-    - `map`: a map from the old variables to the new variables
+    - `map_old_new`: a map_old_new from the old variables to the new variables
 
     # Returns
     - the polynomial in the new ring
 """
-function _swap_vars(poly, R_vars, R_new_vars, map)
-    vars_subst = [R_new_vars[map[Symbol(var)]] for var in R_vars]
+function _swap_vars(poly, R_vars, R_new_vars, map_old_new)
+    vars_subst = [R_new_vars[map_old_new[Symbol(var)]] for var in R_vars]
+    if poly == 0
+        return poly
+    end
     poly_new = poly(vars_subst...)
     return poly_new
 end
@@ -155,28 +158,36 @@ function differential_basis(ideal, derivatives, R, R_vars = [], nf=false, info_l
 
     # If elimination is necessary reorganize the ring and substitute the variables
     if eliminate > 0
-        R_new, R_new_vars, map = _manage_rings(derivatives, R)
+        R_new, R_new_vars, map_old_new = _manage_rings(derivatives, R)
         
-        ideal_new_gens = [_swap_vars(elem, R_vars, R_new_vars, map) for elem in ideal.gens]
-        ideal = AlgebraicSolving.Ideal(ideal_new_gens)
+        ideal_new_gens = [_swap_vars(elem, R_vars, R_new_vars, map_old_new) for elem in ideal.gens]
+        ideal = AlgebraicSolving.Ideal(ideal_new_gens)  
 
         derivatives_new = Dict()
         for (var, expr) in derivatives
-            derivatives_new[_swap_vars(var, R_vars, R_new_vars, map)] = _swap_vars(expr, R_vars, R_new_vars, map)
+            if typeof(expr) == Number
+                expr = R(expr) # R_new ? TODO
+            end
+            derivatives_new[_swap_vars(var, R_vars, R_new_vars, map_old_new)] = _swap_vars(expr, R_vars, R_new_vars, map_old_new)
         end
         derivatives = derivatives_new
+
+        # Infer and create the subring
+        S_vars = [Symbol(var) for var in R_new_vars[eliminate+1:end]]
+    else 
+        S_vars = R.data.S
     end 
 
-    # Infer and create the subring
-    S_vars = [Symbol(var) for var in R_new_vars[eliminate+1:end]]
-    
     # Start computing the differential basis
     G1 = groebner_basis(ideal)
-    pG1 = [diff_op(g, derivatives) for g in intersect(G1, S_vars)]
+
+    pG1 = [_diff_op(g, derivatives) for g in _intersect(G1, S_vars)]
     if nf
         pG1 = [AlgebraicSolving.normal_form(pg, AlgebraicSolving.Ideal(G1)) for pg in pG1]
     end
+
     append!(pG1, G1)
+    pG1 = Vector{typeof(ideal[1])}(pG1)
     G2 = groebner_basis(AlgebraicSolving.Ideal(pG1), eliminate=eliminate,
                         intersect=false, info_level=info_level)
     if info_level > 0
@@ -185,7 +196,7 @@ function differential_basis(ideal, derivatives, R, R_vars = [], nf=false, info_l
         println("#G = ", length(G1))
     end
 
-    # Repeat until closed under diff_op
+    # Repeat until closed under _diff_op
     while G1 != G2
         if info_level > 0
             i += 1
@@ -193,11 +204,13 @@ function differential_basis(ideal, derivatives, R, R_vars = [], nf=false, info_l
             println("#G = ", length(G2))
         end
         G1 = G2
-        pG1 = [diff_op(g, derivatives) for g in intersect(G1, S_vars)]
+        pG1 = [_diff_op(g, derivatives) for g in _intersect(G1, S_vars)]
         if nf == true
             pG1 = [AlgebraicSolving.normal_form(pg, AlgebraicSolving.Ideal(G1)) for pg in pG1]
         end
-            append!(pG1, G1)
+        
+        append!(pG1, G1)
+        pG1 = Vector{typeof(ideal[1])}(pG1)
         G2 = groebner_basis(AlgebraicSolving.Ideal(pG1), eliminate=eliminate,
                             intersect=false, info_level=info_level)
     end

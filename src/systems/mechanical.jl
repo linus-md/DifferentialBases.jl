@@ -89,14 +89,14 @@ function triple_pendulum()
 end
 
 """
-    masspoint_parabola()
+    point_mass_parabola()
 
-    This function contains the implementation of a masspoint restricted to
+    This function contains the implementation of a point mass restricted to
     a parabola.
     
     For reference see Example 2.5.3 in the thesis.
 """
-function masspoint_parabola()
+function point_mass_parabola()
     R, R_vars = AlgebraicSolving.polynomial_ring(
         AlgebraicSolving.GF(101),["dl","p1","p2","p3","v1","v2","v3","l"], 
         internal_ordering=:degrevlex)

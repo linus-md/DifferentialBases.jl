@@ -137,14 +137,15 @@ end
 
     This function computes the differential Gröbner basis of an ideal or 
     an approximation of a full differential ideal if not all derivatives
-    are known. See Algorithm 4 in the thesis for reference.
+    are known. See Algorithm 4 in the thesis for reference. The variables
+    are automatically split into two blocks, where the first block corresponds
+    to the variables that are to be eliminated (i.e. not in derivatives).
+
 
     # Arguments
     - `ideal`: an ideal
     - `derivatives`: a dictionary of derivatives
-    - `R`: a polynomial ring with two blocks of variables, where the first 
-       block corresponds to the variables in `R` that are not in `derivatives` 
-       and the second block corresponds to the variables in `derivatives`
+    - `R`: a polynomial ring
     - `R_vars`: the variables in the ring, only needed for elimination
     - `nf`: a boolean indicating whether to compute the normal form
     - `info_level`: an integer indicating the level of information to print

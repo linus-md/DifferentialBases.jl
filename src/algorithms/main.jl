@@ -17,8 +17,8 @@ using AlgebraicSolving
 """
 function _diff_op(q, derivatives)    
     n = length(q.parent.data.S)
-    @assert length(derivatives) <= n 
-        "There can't be more derivatives than variables."
+    l = length(derivatives)
+    @assert l <= n "There can't be more derivatives than variables."
     
     result = 0
     for (var, value) in derivatives

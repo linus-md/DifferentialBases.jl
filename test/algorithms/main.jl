@@ -95,7 +95,8 @@ end
 
     ideal = AlgebraicSolving.Ideal([x^2 + y^2 - 1])
 
-    R_new, R_new_vars, map_old_new = DifferentialBases._manage_rings(derivatives, R)
+    R_new, R_new_vars, map_old_new = DifferentialBases._manage_rings(
+        derivatives, R)
 
     R_1, R_1_vars = AlgebraicSolving.polynomial_ring(
         AlgebraicSolving.GF(101),
@@ -109,8 +110,10 @@ end
 
     @test parent(ideal[1]) == R_new
 
+    # Test managing for QQ
     ideal, derivatives, R, R_vars = DifferentialBases.simple_pendulum()
-    res = differential_basis(ideal, derivatives, R, Rv, false, 0)
+    res = DifferentialBases.differential_basis(
+        ideal, derivatives, R, R_vars, false, 0)
     @test length(res) == 7
 
 end

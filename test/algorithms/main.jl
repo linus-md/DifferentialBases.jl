@@ -1,6 +1,7 @@
 @testset "Algorithms -> Main -> _intersect" begin
     using DifferentialBases
     using AlgebraicSolving
+
     R, (x,y,z) = AlgebraicSolving.polynomial_ring(
         AlgebraicSolving.GF(101),
         ["x","y","z"],
@@ -21,6 +22,7 @@ end
 @testset "Algorithms -> Main -> _diff_op " begin
     using DifferentialBases
     using AlgebraicSolving
+
     R, (x,y,z) = AlgebraicSolving.polynomial_ring(
         AlgebraicSolving.GF(101),
         ["x","y","z"],
@@ -73,6 +75,9 @@ end
 end
 
 @testset "Algorithms -> Main -> Ring helpers" begin
+    using DifferentialBases
+    using AlgebraicSolving
+
     R, R_vars = AlgebraicSolving.polynomial_ring(
         AlgebraicSolving.GF(101),
         ["l","v","u","y","x","dl"], 
@@ -103,4 +108,9 @@ end
     ideal = AlgebraicSolving.Ideal(ideal_new_gens)
 
     @test parent(ideal[1]) == R_new
+
+    ideal, derivatives, R, R_vars = DifferentialBases.simple_pendulum()
+    res = differential_basis(ideal, derivatives, R, Rv, false, 0)
+    @test length(res) == 7
+
 end

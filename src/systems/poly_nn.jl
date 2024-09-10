@@ -1,4 +1,4 @@
-using AlgebraicSolving: polynomial_ring, GF, Ideal, groebner_basis, normal_form
+using AlgebraicSolving: polynomial_ring, QQ, Ideal, groebner_basis, normal_form
 using AbstractAlgebra: derivative, matrix, vars
 
 function activation_function(x)

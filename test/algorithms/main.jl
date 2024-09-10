@@ -118,7 +118,11 @@ end
 
     ideal, derivatives, R, R_vars = DifferentialBases.simple_pendulum()
     res2 = DifferentialBases.differential_basis(
-        ideal, derivatives, R, R_vars, true, 2)
+        ideal, derivatives, R, R_vars, false, 2)
     @test length(res2) == 7
 
+    ideal, derivatives, R, R_vars = DifferentialBases.simple_pendulum()
+    res2 = DifferentialBases.differential_basis(
+        ideal, derivatives, R, R_vars, true, 2)
+    @test typeof(res2) == Nothing
 end

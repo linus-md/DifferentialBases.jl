@@ -158,7 +158,8 @@ end
     - `derivatives`: a dictionary of derivatives
     - `R`: a polynomial ring
     - `R_vars`: the variables in the ring, only needed for elimination
-    - `nf`: a boolean indicating whether to compute the normal form
+    - `nf`: a boolean indicating whether to compute the normal form, only 
+       supprted for finite fields 
     - `info_level`: an integer indicating the level of information to print
 
     # Returns
@@ -169,6 +170,10 @@ function differential_basis(
     )
     if typeof(R) == Nemo.QQMPolyRing
         n = R.nvars
+        if nf == true
+            println("Normal form is not supported for finite fields.")
+            return
+        end
     elseif typeof(R) == Nemo.FqMPolyRing
         n = R.data.nvars
     else

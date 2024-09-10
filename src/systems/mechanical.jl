@@ -8,7 +8,7 @@ using AlgebraicSolving
 """
 function simple_pendulum()
     R, R_vars = AlgebraicSolving.polynomial_ring(
-        AlgebraicSolving.GF(101),["dl","x","y","u","v","l"], 
+        AlgebraicSolving.QQ,["dl","x","y","u","v","l"], 
         internal_ordering=:degrevlex)
     (dl,x,y,u,v,l) = R_vars
 
@@ -30,7 +30,7 @@ end
     For reference see Example 2.5.2 in the thesis.
 """
 function double_pendulum()
-    R, R_vars = AlgebraicSolving.polynomial_ring(AlgebraicSolving.GF(101),
+    R, R_vars = AlgebraicSolving.polynomial_ring(AlgebraicSolving.QQ,
         ["dl1","dl2","x1","y1","u1","v1","x2","y2","u2","v2","l1","l2"],
         internal_ordering=:degrevlex)
     (dl1,dl2,x1,y1,u1,v1,x2,y2,u2,v2,l1,l2) = R_vars
@@ -62,7 +62,7 @@ end
 """
 function triple_pendulum()
     R, R_vars = AlgebraicSolving.polynomial_ring(
-        AlgebraicSolving.GF(101),
+        AlgebraicSolving.QQ,
         ["dl1","dl2","dl3","x1","y1","u1","v1","x2","y2",
         "u2","v2","x3","y3","u3","v3","l1","l2","l3"],
         internal_ordering=:degrevlex)
@@ -102,7 +102,7 @@ end
 """
 function point_mass_parabola()
     R, R_vars = AlgebraicSolving.polynomial_ring(
-        AlgebraicSolving.GF(101),["dl","p1","p2","p3","v1","v2","v3","l"], 
+        AlgebraicSolving.QQ,["dl","p1","p2","p3","v1","v2","v3","l"], 
         internal_ordering=:degrevlex)
     
         (dl, p1, p2, p3, v1, v2, v3, l) = R_vars

@@ -1,6 +1,7 @@
 @testset "Algorithms -> Main -> _intersect" begin
     using DifferentialBases
     using AlgebraicSolving
+
     R, (x,y,z) = AlgebraicSolving.polynomial_ring(
         AlgebraicSolving.GF(101),
         ["x","y","z"],
@@ -21,6 +22,7 @@ end
 @testset "Algorithms -> Main -> _diff_op " begin
     using DifferentialBases
     using AlgebraicSolving
+
     R, (x,y,z) = AlgebraicSolving.polynomial_ring(
         AlgebraicSolving.GF(101),
         ["x","y","z"],
@@ -73,6 +75,9 @@ end
 end
 
 @testset "Algorithms -> Main -> Ring helpers" begin
+    using DifferentialBases
+    using AlgebraicSolving
+
     R, R_vars = AlgebraicSolving.polynomial_ring(
         AlgebraicSolving.GF(101),
         ["l","v","u","y","x","dl"], 
@@ -90,7 +95,8 @@ end
 
     ideal = AlgebraicSolving.Ideal([x^2 + y^2 - 1])
 
-    R_new, R_new_vars, map_old_new = DifferentialBases._manage_rings(derivatives, R)
+    R_new, R_new_vars, map_old_new = DifferentialBases._manage_rings(
+        derivatives, R)
 
     R_1, R_1_vars = AlgebraicSolving.polynomial_ring(
         AlgebraicSolving.GF(101),
@@ -100,7 +106,23 @@ end
     @test R_new == R_1
 
     ideal_new_gens = [DifferentialBases._swap_vars(elem, R_vars, R_new_vars, map_old_new) for elem in ideal.gens]
-    ideal = AlgebraicSolving.Ideal(ideal_new_gens)
+    ideal_new = AlgebraicSolving.Ideal(ideal_new_gens)
 
-    @test parent(ideal[1]) == R_new
+    @test parent(ideal_new[1]) == R_new
+
+
+    # Test managing for QQ/GF
+    res = DifferentialBases.differential_basis(
+        ideal, derivatives, R, R_vars, true, 2)
+    @test length(res) == 8
+
+    ideal, derivatives, R, R_vars = DifferentialBases.simple_pendulum()
+    res2 = DifferentialBases.differential_basis(
+        ideal, derivatives, R, R_vars, false, 2)
+    @test length(res2) == 7
+
+    ideal, derivatives, R, R_vars = DifferentialBases.simple_pendulum()
+    res2 = DifferentialBases.differential_basis(
+        ideal, derivatives, R, R_vars, true, 2)
+    @test typeof(res2) == Nothing
 end

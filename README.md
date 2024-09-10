@@ -11,30 +11,32 @@ The following example is derived from a simple pendulum. Calling ``simple_pendul
 ```julia
 using DifferentialBases: differential_basis, simple_pendulum
 using AlgebraicSolving: polynomial_ring, GF, Ideal
-ideal, derivatives, R, Rv =  simple_pendulum()
+ideal, derivatives, R, Rv = simple_pendulum()
 ```
 
 Then we have the following system:
 
 ```julia-repl
-println(ideal)
-Nemo.FqMPolyRingElem[x^2 + y^2 + 100]
-println(derivatives)
+julia> println(ideal)
+QQMPolyRingElem[x^2 + y^2 - 1]
+
+julia> println(derivatives)
+Dict{QQMPolyRingElem, QQMPolyRingElem}(x => u, l => dl, u => x*l, v => y*l - 1, y => v)println(derivatives)
 Dict{Nemo.FqMPolyRingElem, Nemo.FqMPolyRingElem}(y => v, x => u, u => x*l, v => y*l + 100, l => dl), Multivariate polynomial ring in 6 variables over GF(101)
 ```
 
-Calling `differential_basis(ideal, derivatives, R, false, 0)` results in the following Gröbner basis:
+Calling `differential_basis(ideal, derivatives, R, Rv, false, 0)` results in the following Gröbner basis:
 
 ```julia
-8-element Vector{Nemo.FqMPolyRingElem}:
- y^2 + x^2 + 100
- v*y + u*x
- l + v^2 + u^2 + 100*y
- l*x^2 + 100*l + 100*u^2 + 100*y*x^2 + y
- 100*v*x^2 + v + u*y*x
- l*y*x + 100*v*u + x^3 + 100*x
- l*y + 100*v*u*x + u^2*y + x^2 + 100
- dl + 98*v
+julia> differential_basis(ideal, derivatives, R, Rv, false, 0)
+7-element Vector{QQMPolyRingElem}:
+ u^2 + v^2 - y + l
+ x*u + y*v
+ x^2 + y^2 - 1
+ y*u*v - x*v^2 + x*y - x*l
+ y^2*u - x*y*v - u
+ y^3 - y^2*l + v^2 - y + l
+ x*y^2 - x*y*l + u*v
 ```
 
 We can uncover interesting additional constraints from those equations i.e $ux + vy = 0$ describes that the motion of the masspoint of the pendulum is tangent to the rod of the pendulum. Furthermore we uncover that $u^2 + v^2 - y + 1 = 0$ which describes that the sum of potential and kinetic energy is constant i.e. energy is conserved. We learn that $dl= 3v$.

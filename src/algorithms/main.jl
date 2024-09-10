@@ -1,3 +1,4 @@
+using Nemo
 using AbstractAlgebra
 using AlgebraicSolving
 
@@ -15,8 +16,12 @@ using AlgebraicSolving
     # Returns
     - the linear differential operator applied to the polynomial
 """
-function _diff_op(q, derivatives)    
-    n = length(q.parent.data.S)
+function _diff_op(q, derivatives)
+    if typeof(q.parent) == Nemo.QQMPolyRing
+        n = length(q.parent.S)
+    else
+        n = length(q.parent.data.S)
+    end
     l = length(derivatives)
     @assert l <= n "There can't be more derivatives than variables."
     
@@ -79,14 +84,20 @@ end
 function _manage_rings(derivatives, R)
     S_proper = []
     R_elim = []
-    s = length(R.data.S) - length(derivatives)
+    if typeof(R) == Nemo.QQMPolyRing
+        s = length(R.S) - length(derivatives)
+        vars = R.S
+    else
+        s = length(R.data.S) - length(derivatives)
+        vars = R.data.S
+    end
     map_old_new = Dict()
     
     index_n_el = s + 1
     index_el = 1
 
     # Move the variables to the correct blocks and create a map
-    for var in R.data.S
+    for var in vars
         if Symbol(var) in [Symbol(key) for key in keys(derivatives)]
             push!(S_proper, Symbol(var))
             map_old_new[Symbol(var)] = index_n_el
@@ -147,7 +158,8 @@ end
     - `derivatives`: a dictionary of derivatives
     - `R`: a polynomial ring
     - `R_vars`: the variables in the ring, only needed for elimination
-    - `nf`: a boolean indicating whether to compute the normal form
+    - `nf`: a boolean indicating whether to compute the normal form, only 
+       supprted for finite fields 
     - `info_level`: an integer indicating the level of information to print
 
     # Returns
@@ -156,8 +168,18 @@ end
 function differential_basis(
         ideal, derivatives, R, R_vars = [], nf=false, info_level=0
     )
-    
-    n = R.data.nvars
+    if typeof(R) == Nemo.QQMPolyRing
+        n = R.nvars
+        if nf == true
+            println("Normal form is not supported for finite fields.")
+            return
+        end
+    elseif typeof(R) == Nemo.FqMPolyRing
+        n = R.data.nvars
+    else
+        println("The ring type is not supported.")
+        return
+    end
     s = length(derivatives)    
     eliminate = n - s
 
@@ -179,7 +201,11 @@ function differential_basis(
         # Infer and create the subring
         S_vars = [Symbol(var) for var in R_n_vars[eliminate+1:end]]
     else 
-        S_vars = R.data.S
+        if typeof(R) == Nemo.QQMPolyRing
+            S_vars = R.S
+        else    
+            S_vars = R.data.S
+        end
     end 
 
     # Start computing the differential basis

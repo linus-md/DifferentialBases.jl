@@ -12,7 +12,7 @@ using AlgebraicSolving
 function chem_1()
     
     R, R_vars = AlgebraicSolving.polynomial_ring(
-        AlgebraicSolving.GF(101),["x1","x2","x3","x4","k1","k2","k3","T1","T2"], 
+        AlgebraicSolving.QQ,["x1","x2","x3","x4","k1","k2","k3","T1","T2"], 
         internal_ordering=:degrevlex)
     
     (x1, x2, x3, x4, k1, k2, k3, T1, T2) = R_vars
@@ -37,7 +37,7 @@ end
 """
 function akzo_nobel()
     R, R_vars = AlgebraicSolving.polynomial_ring(
-        AlgebraicSolving.GF(101),
+        AlgebraicSolving.QQ,
         ["dx6","dx7",
         "x1","x2","x3","x4","x5","x6","x7",
         "k1","k2","k3","k4","K","klA","Ks","pCO2","H"],
@@ -86,7 +86,7 @@ end
     The example can be found as example 2.5.6 in the thesis.
 """
 function fast_slow_reaction()
-    R, R_vars = AlgebraicSolving.polynomial_ring(AlgebraicSolving.GF(101),
+    R, R_vars = AlgebraicSolving.polynomial_ring(AlgebraicSolving.QQ,
         ["dRA","dRB","dV2","dCAi","dF","dFi",
         "RA","RB","V1","V2","CA","CAi","CB","CC","F","Fi",
         "Keq","kB"],

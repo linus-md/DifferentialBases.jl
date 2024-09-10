@@ -20,7 +20,7 @@ Returns the corresponding system of the two layer polynomial neural network
 """
 function poly_nn_2(m, n, r, activation=activation_function)
     R, A, B, x, y = polynomial_ring(
-        GF(101),
+        QQ,
         :A => (1:m, 1:n),
         :B => (1:n, 1:r),
         :x => (1:r),

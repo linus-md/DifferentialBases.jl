@@ -15,7 +15,7 @@ Returns the corresponding system of the two layer linear neural network
 """
 function linear_nn_2(m, n, r)    
     R, A, B, x, y = AlgebraicSolving.polynomial_ring(
-        AlgebraicSolving.GF(101),
+        AlgebraicSolving.QQ,
         :A=>(1:m, 1:n),
         :B=>(1:n, 1:r),
         :x => (1:r),
@@ -57,7 +57,7 @@ Returns the corresponding system of the three layer linear neural network
 """
 function linear_nn_3(m, n, r, s)
     R, A, B, C, x, y = AlgebraicSolving.polynomial_ring(
-        AlgebraicSolving.GF(101),
+        AlgebraicSolving.QQ,
         :A=>(1:m, 1:n), 
         :B=>(1:n, 1:r),
         :C=>(1:r, 1:s),

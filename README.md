@@ -10,7 +10,6 @@ The following example is derived from a simple pendulum. Calling ``simple_pendul
 
 ```julia
 using DifferentialBases: differential_basis, simple_pendulum
-using AlgebraicSolving: polynomial_ring, GF, Ideal
 ideal, derivatives, R, Rv = simple_pendulum()
 ```
 

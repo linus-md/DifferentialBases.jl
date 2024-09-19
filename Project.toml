@@ -1,7 +1,7 @@
 name = "DifferentialBases"
 uuid = "12289b5d-7c11-438f-92a0-e1442e5c6fa7"
 authors = ["Linus A. Sommer"]
-version = "1.0.0-release"
+version = "1.0.0"
 
 [deps]
 AbstractAlgebra = "c3fe647b-3220-5bb0-a1ea-a7954cac585d"

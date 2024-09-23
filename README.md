@@ -45,5 +45,5 @@ We can uncover interesting additional constraints from those equations i.e $ux +
 To install DifferentialBases.jl enter the **Pkg** REPL by pressing `]` and execute
 
 ```julia-repl
-add https://github.com/linus-md/DifferentialBases.jl
+add DifferentialBases
 ```
